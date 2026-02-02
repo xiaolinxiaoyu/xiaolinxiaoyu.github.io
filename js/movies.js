@@ -6,6 +6,12 @@ const movies = [
     imageUrl: "images/us.jpg",
     time: '2023-1-1'
   },
+  {
+    id: 1,
+    title: "La La Land",
+    imageUrl: "images/us.jpg",
+    time: '2023-1-1'
+  },
 ];
 
 const movie_num = movies.length;
