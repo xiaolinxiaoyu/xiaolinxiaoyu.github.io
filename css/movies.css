@@ -84,8 +84,8 @@ h1::after {
   position: relative;
   cursor: pointer;
   border: 1px solid rgba(255, 182, 193, 0.3);
-  width: 100%; /* 重要：占满网格列 */
-  height: 340px; /* 固定高度 */
+  width: 50%; /* 重要：占满网格列 */
+  height: 170px; /* 固定高度 */
 }
 
 .movie-card:hover {
