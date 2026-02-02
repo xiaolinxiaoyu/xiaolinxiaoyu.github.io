@@ -4,7 +4,7 @@
 body {
   font-family: "Microsoft YaHei", sans-serif;
   text-align: center;
-  background: linear-gradient(-45deg, #ffe6f0, #fff0f5, #ffe6f0, #ffc0cb);
+  background: #fcebeb;
   background-size: 400% 400%;
   animation: gradientShift 15s ease infinite;
   color: #333;
@@ -14,11 +14,6 @@ body {
   align-items: center;
 }
 
-@keyframes gradientShift {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
 
 .container {
   max-width: 900px;
@@ -70,8 +65,8 @@ h1 {
 }
 
 .card img {
-  width: 100px;
-  height: 100px;
+  width: 150px;
+  height: 140px;
   margin-bottom: 10px;
 }
 
@@ -85,14 +80,3 @@ h1 {
   color: #555;
 }
 
-/* ===== 心形动画 ===== */
-.hearts {
-  font-size: 2rem;
-  margin: 30px 0 0 0;
-  animation: bounce 1s infinite alternate;
-}
-
-@keyframes bounce {
-  from { transform: translateY(0); }
-  to { transform: translateY(-10px); }
-}

@@ -2,12 +2,24 @@
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
-  <title>观影墙</title>
-  <link rel="stylesheet" href="css/style.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🎬 我们的观影墙</title>
+  <link rel="stylesheet" href="css/movies.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-  <h1>🎬 观影墙</h1>
-  <p>这里可以记录我们一起看的电影</p>
-  <a href="index.html">⬅ 返回主页</a>
+  <div class="container">
+    <h1><i class="fas fa-film"></i> 我们的观影墙</h1>
+    <p class="subtitle">这里记录我们一起看过的每一部电影，都是我们共同的回忆 💕</p>
+    <p id="movie_num">林鱼在一起看了 0 部作品！ 💕</p>
+    
+    <!-- 电影画廊 -->
+    <div id="movieGallery" class="gallery"></div>
+    
+    <!-- 返回主页按钮 -->
+    <a href="index.html" class="back-link">返回主页</a>
+  </div>
+
+  <script src="js/movies.js"></script>
 </body>
 </html>
