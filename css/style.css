@@ -39,6 +39,21 @@ h1 {
   margin-bottom: 30px;
 }
 
+#time_detail {
+  font-size: 1rem;
+  color: #c71585;
+  margin: 0;
+}
+
+.footer {
+  text-align: center;
+  margin-top: 40px;
+  padding: 20px;
+  color: #9e6b8e;
+  font-size: 0.95rem;
+  border-top: 1px solid rgba(255, 182, 193, 0.3);
+}
+
 /* ===== 导航卡片 ===== */
 .nav-cards {
   display: flex;
