@@ -178,7 +178,12 @@ h1::after {
   }
   
   .movie-poster {
-    height: 240px;
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
+
+  .movie-card {
+    height: auto;
   }
 }
 
@@ -192,7 +197,12 @@ h1::after {
   }
   
   .movie-poster {
-    height: 200px;
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
+
+  .movie-card {
+    height: auto;
   }
 }
 
