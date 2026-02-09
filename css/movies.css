@@ -1,12 +1,11 @@
-/* 淡粉色系观影墙样式 */
-* {
+﻿* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+  font-family: "Segoe UI", "Microsoft YaHei", sans-serif;
   background: linear-gradient(135deg, #ffe6e6, #ffd6e7, #fff0f5);
   min-height: 100vh;
   color: #6d3b5f;
@@ -14,12 +13,11 @@ body {
   line-height: 1.6;
 }
 
-
 .container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  text-align: center; /* 核心代码：让内部的所有 inline-block 元素居中 */
+  text-align: center;
 }
 
 h1 {
@@ -27,28 +25,12 @@ h1 {
   font-size: 2.8rem;
   margin: 30px 0 15px;
   color: #c94c8c;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
-  position: relative;
-  display: inline-block;
-  width: 100%;
-}
-
-h1::after {
-  content: "";
-  position: absolute;
-  bottom: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 120px;
-  height: 4px;
-  background: linear-gradient(to right, #ffb6c1, #ff69b4);
-  border-radius: 2px;
 }
 
 .subtitle {
   text-align: center;
   font-size: 1.2rem;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   color: #9e6b8e;
   font-weight: 300;
 }
@@ -57,21 +39,78 @@ h1::after {
   font-size: 1.3rem;
   font-weight: 600;
   color: #ff69b4;
-  text-align: center;                 /* 文字居中 */
-  margin: 40px auto;                  /* 上下间距 40px，左右自动居中 */
+  margin: 20px auto;
   padding: 15px 25px;
   background: linear-gradient(120deg, #ffe4e1, #ffb6c1);
   border-radius: 12px;
   box-shadow: 0 5px 15px rgba(255, 105, 180, 0.3);
-  display: inline-block;              /* 宽度随内容自适应 */
+  display: inline-block;
 }
 
-/* 电影画廊样式 */
+.upload-panel {
+  margin: 20px auto 30px;
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 182, 193, 0.4);
+  border-radius: 16px;
+  padding: 18px;
+  text-align: left;
+}
+
+.upload-panel h2 {
+  font-size: 1.2rem;
+  margin-bottom: 12px;
+  color: #a64578;
+}
+
+#movieForm {
+  display: grid;
+  gap: 12px;
+}
+
+.field-group {
+  display: grid;
+  gap: 6px;
+}
+
+.field-group label {
+  font-weight: 600;
+  color: #7f4168;
+}
+
+.field-group input {
+  border: 1px solid #f2a5c6;
+  border-radius: 10px;
+  padding: 10px;
+  font-size: 0.95rem;
+}
+
+#submitBtn {
+  background: linear-gradient(to right, #ff7eb3, #ff5e9c);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+#submitBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.form-message {
+  min-height: 20px;
+  color: #8a4b7c;
+  margin-top: 8px;
+}
+
 .gallery {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
   gap: 25px;
-  margin: 40px 0;
+  margin: 25px 0;
   padding: 20px;
 }
 
@@ -80,18 +119,14 @@ h1::after {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 10px 20px rgba(206, 138, 170, 0.15);
-  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  position: relative;
+  transition: all 0.3s ease;
   cursor: pointer;
   border: 1px solid rgba(255, 182, 193, 0.3);
-  width: 100%; /* 重要：占满网格列 */
-  height: 340px; /* 固定高度 */
 }
 
 .movie-card:hover {
-  transform: translateY(-12px) scale(1.03);
+  transform: translateY(-8px);
   box-shadow: 0 15px 30px rgba(206, 138, 170, 0.25);
-  border-color: #ffb6c1;
 }
 
 .movie-poster {
@@ -99,141 +134,43 @@ h1::after {
   height: 305px;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s ease;
 }
 
-.movie-card:hover .movie-poster {
-  transform: scale(1.05);
-}
-
-/* 优化后的电影信息区域 */
 .movie-info {
-  /* 减少内边距：上下设为 12px，左右设为 10px，让框子看起来更紧凑 */
-  padding: 6px 10px; 
-  background: rgba(255, 255, 255, 0.9);
-  /* 确保内部文字水平居中 */
-  text-align: center; 
+  padding: 8px 10px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.92);
 }
 
 .movie-title {
-  font-size: 1.1rem; /* 稍微缩小一点字号，适配更小的框子 */
+  font-size: 1.02rem;
   font-weight: 600;
-  margin-bottom: 0;   /* 如果下方没有描述，将 margin 设为 0 */
   color: #8a4b7c;
-  line-height: 1.4;
-  /* 确保块级元素下的文字居中 */
-  display: block; 
 }
 
-/* 返回按钮样式 */
 .back-link {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin: 40px auto;
+  margin: 25px auto;
   padding: 12px 28px;
   background: linear-gradient(to right, #ffb6c1, #ff69b4);
   color: white;
   text-decoration: none;
   border-radius: 50px;
   font-weight: 600;
-  font-size: 1.1rem;
-  box-shadow: 0 6px 15px rgba(255, 105, 180, 0.3);
-  transition: all 0.3s ease;
-  max-width: 200px;
 }
 
-.back-link:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(255, 105, 180, 0.4);
-  background: linear-gradient(to right, #ff69b4, #ff1493);
-}
-
-.back-link::before {
-  content: "←";
-  margin-right: 8px;
-  font-size: 1.2rem;
-}
-
-/* 页脚样式 */
-.footer {
-  text-align: center;
-  margin-top: 60px;
-  padding: 20px;
-  color: #9e6b8e;
-  font-size: 0.9rem;
-  border-top: 1px solid rgba(255, 182, 193, 0.3);
-}
-
-/* 响应式设计 */
-@media (max-width: 768px) {
-  .gallery {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 15px;
-    padding: 10px;
-  }
-  
-  h1 {
-    font-size: 2.2rem;
-  }
-  
-  .movie-poster {
-    height: auto;
-    aspect-ratio: 2 / 3;
-  }
-
-  .movie-card {
-    height: auto;
-  }
-}
-
-@media (max-width: 480px) {
-  .gallery {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-  }
-  
-  h1 {
-    font-size: 1.8rem;
-  }
-  
-  .movie-poster {
-    height: auto;
-    aspect-ratio: 2 / 3;
-  }
-
-  .movie-card {
-    height: auto;
-  }
-}
-
-/* 加载动画 */
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-.movie-card {
-  animation: fadeIn 0.6s ease forwards;
-  opacity: 0;
-}
-
-/* 图片预览遮罩层 */
 .image-preview-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.85); /* 深色透明背景 */
+  inset: 0;
+  background: rgba(0, 0, 0, 0.85);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* 确保在最上层 */
-  cursor: zoom-out;
-  animation: fadeIn 0.3s ease;
+  z-index: 9999;
 }
 
-/* 预览内容容器 */
 .preview-content {
   position: relative;
   max-width: 90%;
@@ -241,52 +178,26 @@ h1::after {
   text-align: center;
 }
 
-/* 预览图片 */
 .preview-content img {
   max-width: 100%;
   max-height: 80vh;
   border-radius: 8px;
-  box-shadow: 0 0 30px rgba(0,0,0,0.5);
-  border: 3px solid #fff; /* 给预览图加个小白边，更有质感 */
+  border: 3px solid #fff;
 }
 
-/* 预览标题 */
 .preview-content p {
   color: white;
-  margin-top: 15px;
-  font-size: 1.2rem;
-  text-shadow: 1px 1px 5px rgba(0,0,0,0.5);
+  margin-top: 12px;
 }
 
-/* 关闭按钮 */
 .close-btn {
   position: absolute;
-  top: -40px;
-  right: -40px;
+  top: -35px;
+  right: -35px;
   color: white;
   font-size: 40px;
-  cursor: pointer;
 }
 
-/* 动画 */
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-
-
-/* 为每个卡片设置延迟动画 
-.movie-card:nth-child(1) { animation-delay: 0.1s; }
-.movie-card:nth-child(2) { animation-delay: 0.1s; }
-.movie-card:nth-child(3) { animation-delay: 0.3s; }
-.movie-card:nth-child(4) { animation-delay: 0.4s; }
-.movie-card:nth-child(5) { animation-delay: 0.5s; }
-.movie-card:nth-child(6) { animation-delay: 0.6s; }
-.movie-card:nth-child(7) { animation-delay: 0.7s; }
-.movie-card:nth-child(8) { animation-delay: 0.8s; }*/
-
-/* 空状态提示 */
 .empty-state {
   text-align: center;
   padding: 60px 20px;
@@ -295,9 +206,19 @@ h1::after {
   grid-column: 1 / -1;
 }
 
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 20px;
-  color: #ffb6c1;
-  display: block;
+@media (max-width: 768px) {
+  .gallery {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 15px;
+    padding: 10px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
+  .movie-poster {
+    height: auto;
+    aspect-ratio: 2 / 3;
+  }
 }

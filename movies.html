@@ -1,22 +1,41 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🎬 我们的观影墙</title>
+  <meta name="api-base-url" content="">
+  <title>我们的观影墙</title>
   <link rel="stylesheet" href="css/movies.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
   <div class="container">
     <h1><i class="fas fa-film"></i> 我们的观影墙</h1>
-    <p class="subtitle">这里记录我们一起看过的每一部电影，都是我们共同的回忆 💕</p>
-    <p id="movie_num">林鱼在一起看了 0 部作品！ 💕</p>
-    
-    <!-- 电影画廊 -->
+    <p class="subtitle">这里记录我们一起看过的每一部电影，都是共同回忆。</p>
+    <p id="movie_num">一起看了 0 部作品！</p>
+
+    <section class="upload-panel">
+      <h2>上传电影卡片</h2>
+      <form id="movieForm" enctype="multipart/form-data">
+        <div class="field-group">
+          <label for="title">电影名称</label>
+          <input id="title" name="title" type="text" maxlength="60" required>
+        </div>
+        <div class="field-group">
+          <label for="time">观看日期</label>
+          <input id="time" name="time" type="date" required>
+        </div>
+        <div class="field-group">
+          <label for="image">海报图片</label>
+          <input id="image" name="image" type="file" accept="image/*" required>
+        </div>
+        <button type="submit" id="submitBtn">上传并生成卡片</button>
+      </form>
+      <p id="formMessage" class="form-message"></p>
+    </section>
+
     <div id="movieGallery" class="gallery"></div>
-    
-    <!-- 返回主页按钮 -->
+
     <a href="index.html" class="back-link">返回主页</a>
   </div>
 
