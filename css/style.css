@@ -1341,6 +1341,7 @@ body.theme-night .home-page-btn {
 }
 
 .home-page-info {
+  text-align: center;
   font-size: 0.88rem;
   color: var(--subtitle-color);
   min-width: 72px;
@@ -1349,6 +1350,10 @@ body.theme-night .home-page-btn {
 .home-page-btn:hover:not(:disabled) {
   transform: translateY(-1px);
   opacity: 0.9;
+}
+
+.home-page-btn.prev {
+  margin-left: 60px;
 }
 
 .home-page-btn:disabled {
