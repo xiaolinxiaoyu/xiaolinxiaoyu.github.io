@@ -167,6 +167,7 @@ function createPager(currentPage, totalPages, onPageChange) {
   if (totalPages <= 1) return null;
   const pager = document.createElement("div");
   pager.className = "home-pagination";
+  pager.dataset.totalPages = String(totalPages);
   pager.innerHTML = `
     <button type="button" class="home-page-btn prev"${currentPage === 1 ? " disabled" : ""}>上一页</button>
     <span class="home-page-info">第 ${currentPage} / ${totalPages} 页</span>
@@ -437,9 +438,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const footerEl = document.getElementById("homeSectionFooter");
   const tabsWrapEl = document.getElementById("homeSectionTabs");
   const collapseBtn = document.getElementById("homeSectionCollapseBtn");
-  const headTopEl = viewerEl.querySelector(".home-section-head-top");
 
   if (!tabs.length || !viewerEl || !titleEl || !subtitleEl || !countEl || !contentEl || !footerEl) return;
+  footerEl.hidden = true;
 
   const cache = new Map();
   const pageState = new Map();
@@ -474,25 +475,45 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function syncCollapseButtonPlacement(config) {
-    if (!collapseBtn || !headTopEl) return;
+    if (!collapseBtn) return;
     const pager = contentEl.querySelector(".home-pagination");
+    const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
+    let actionRow = contentEl.querySelector(".home-pagination.home-pagination-only-collapse");
+    let mobileCollapseRow = contentEl.querySelector(".home-pagination.home-pagination-mobile-collapse-row");
+
     if (pager) {
+      if (isMobileViewport) {
+        if (actionRow && actionRow.parentElement) {
+          actionRow.parentElement.removeChild(actionRow);
+          actionRow = null;
+        }
+        if (!mobileCollapseRow) {
+          mobileCollapseRow = document.createElement("div");
+          mobileCollapseRow.className = "home-pagination home-pagination-mobile-collapse-row";
+        }
+        contentEl.appendChild(mobileCollapseRow);
+        mobileCollapseRow.appendChild(collapseBtn);
+        return;
+      }
+      if (mobileCollapseRow && mobileCollapseRow.parentElement) {
+        mobileCollapseRow.parentElement.removeChild(mobileCollapseRow);
+      }
+      if (actionRow && actionRow.parentElement) {
+        actionRow.parentElement.removeChild(actionRow);
+      }
       pager.appendChild(collapseBtn);
       return;
     }
-    if (config && config.type === "media") {
-      let actionRow = contentEl.querySelector(".home-pagination.home-pagination-only-collapse");
-      if (!actionRow) {
-        actionRow = document.createElement("div");
-        actionRow.className = "home-pagination home-pagination-only-collapse";
-        contentEl.appendChild(actionRow);
-      }
-      actionRow.appendChild(collapseBtn);
-      return;
+
+    if (mobileCollapseRow && mobileCollapseRow.parentElement) {
+      mobileCollapseRow.parentElement.removeChild(mobileCollapseRow);
     }
-    if (collapseBtn.parentElement !== headTopEl) {
-      headTopEl.appendChild(collapseBtn);
+    if (!actionRow) {
+      actionRow = document.createElement("div");
+      actionRow.className = "home-pagination home-pagination-only-collapse";
+      contentEl.appendChild(actionRow);
     }
+    actionRow.appendChild(collapseBtn);
   }
 
   function applyMediaHeightMode(config, sectionKey) {
@@ -528,7 +549,7 @@ document.addEventListener("DOMContentLoaded", () => {
     titleEl.innerText = config.title;
     subtitleEl.innerText = config.subtitle;
     countEl.innerText = fillTemplate(config.countTemplate, 0);
-    footerEl.innerText = "加载中...";
+    footerEl.innerText = "";
     contentEl.innerHTML = '<div class="home-empty"><p>加载中...</p></div>';
 
     try {
@@ -540,7 +561,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (token !== activeToken) return;
 
       countEl.innerText = fillTemplate(config.countTemplate, items.length);
-      footerEl.innerText = fillTemplate(config.footerTemplate, items.length);
+      footerEl.innerText = "";
 
       if (config.type === "media") {
         const renderMediaPage = (page, meta = {}) => {
@@ -583,7 +604,7 @@ document.addEventListener("DOMContentLoaded", () => {
       if (token !== activeToken) return;
       console.error(error);
       countEl.innerText = fillTemplate(config.countTemplate, 0);
-      footerEl.innerText = config.errorMain;
+      footerEl.innerText = "";
       renderEmpty(contentEl, config, true);
       syncCollapseButtonPlacement(config);
       requestAnimationFrame(() => {
