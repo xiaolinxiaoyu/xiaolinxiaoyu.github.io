@@ -3,6 +3,7 @@ const SECONDS_PER_DAY = 24 * 60 * 60;
 const MS_PER_DAY = SECONDS_PER_DAY * 1000;
 const MANUAL_THEME_KEY = "manual_home_theme";
 const MANUAL_THEME_EXPIRES_KEY = "manual_home_theme_expires_at";
+
 const beijingTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
   timeZone: "Asia/Shanghai",
   hour12: false,
@@ -28,9 +29,9 @@ function formatDate(date) {
 }
 
 function setTextById(id, text) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.innerText = text;
+  const element = document.getElementById(id);
+  if (element) {
+    element.innerText = text;
   }
 }
 
@@ -47,15 +48,8 @@ function updateTogetherTime() {
   const minutes = Math.floor((remainder % 3600) / 60);
   const seconds = remainder % 60;
 
-  const daysEl = document.getElementById("days");
-  if (daysEl) {
-    daysEl.innerText = `\u5df2\u7ecf\u5728\u4e00\u8d77 ${days} \u5929\u5566 \ud83d\udc95`;
-  }
-
-  const detailEl = document.getElementById("time_detail");
-  if (detailEl) {
-    detailEl.innerText = `${days}\u5929 ${hours}\u5c0f\u65f6 ${minutes}\u5206\u949f ${seconds}\u79d2`;
-  }
+  setTextById("days", `已经在一起 ${days} 天啦 💕`);
+  setTextById("time_detail", `${days}天 ${hours}小时 ${minutes}分钟 ${seconds}秒`);
 }
 
 function getNextBirthdayTarget(todayDate, month, day) {
@@ -82,6 +76,12 @@ function updateCountdowns() {
     Math.round((milestoneTarget - todayDate) / MS_PER_DAY)
   );
 
+  const anniversaryTarget = getNextBirthdayTarget(todayDate, 11, 25);
+  const anniversaryRemaining = Math.max(
+    0,
+    Math.round((anniversaryTarget - todayDate) / MS_PER_DAY)
+  );
+
   const linBirthdayTarget = getNextBirthdayTarget(todayDate, 5, 18);
   const linBirthdayRemaining = Math.max(
     0,
@@ -93,38 +93,52 @@ function updateCountdowns() {
     0,
     Math.round((yuBirthdayTarget - todayDate) / MS_PER_DAY)
   );
-  const anniversaryTarget = getNextBirthdayTarget(todayDate, 11, 25);
-  const anniversaryRemaining = Math.max(
+  const valentineTarget = getNextBirthdayTarget(todayDate, 2, 14);
+  const valentineRemaining = Math.max(
     0,
-    Math.round((anniversaryTarget - todayDate) / MS_PER_DAY)
+    Math.round((valentineTarget - todayDate) / MS_PER_DAY)
   );
 
+  setTextById("countdown_valentine_days", `还有 ${valentineRemaining} 天`);
+  setTextById("countdown_valentine_target", `目标日期：${formatDate(valentineTarget)}`);
   setTextById("countdown_anniversary_days", `还有 ${anniversaryRemaining} 天`);
-  setTextById(
-    "countdown_anniversary_target",
-    `目标日期：${formatDate(anniversaryTarget)}`
-  );
-
+  setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
   setTextById(
     "countdown_milestone_days",
     `还有 ${milestoneRemaining} 天（第 ${nextMilestone} 天）`
   );
-  setTextById(
-    "countdown_milestone_target",
-    `目标日期：${formatDate(milestoneTarget)}`
-  );
-
+  setTextById("countdown_milestone_target", `目标日期：${formatDate(milestoneTarget)}`);
   setTextById("countdown_lin_days", `还有 ${linBirthdayRemaining} 天`);
-  setTextById(
-    "countdown_lin_target",
-    `目标日期：${formatDate(linBirthdayTarget)}`
-  );
-
+  setTextById("countdown_lin_target", `目标日期：${formatDate(linBirthdayTarget)}`);
   setTextById("countdown_yu_days", `还有 ${yuBirthdayRemaining} 天`);
-  setTextById(
-    "countdown_yu_target",
-    `目标日期：${formatDate(yuBirthdayTarget)}`
-  );
+  setTextById("countdown_yu_target", `目标日期：${formatDate(yuBirthdayTarget)}`);
+}
+
+function openImagePreview(src, alt) {
+  const overlay = document.createElement("div");
+  overlay.className = "preview-overlay";
+  overlay.innerHTML = `
+    <div class="preview-box">
+      <img src="${src}" alt="${alt}">
+      <span class="close-btn" aria-label="关闭预览">&times;</span>
+    </div>
+  `;
+
+  const close = () => {
+    if (overlay.parentNode) {
+      document.body.removeChild(overlay);
+    }
+  };
+
+  overlay.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (target.classList.contains("preview-overlay") || target.classList.contains("close-btn")) {
+      close();
+    }
+  });
+
+  document.body.appendChild(overlay);
 }
 
 function initCarousel() {
@@ -178,43 +192,11 @@ function initCarousel() {
     });
   });
 
-  track.addEventListener("mouseenter", () => {
-    clearInterval(timer);
-  });
-
-  track.addEventListener("mouseleave", () => {
-    start();
-  });
+  track.addEventListener("mouseenter", () => clearInterval(timer));
+  track.addEventListener("mouseleave", () => start());
 
   render();
   start();
-}
-
-function openImagePreview(src, alt) {
-  const overlay = document.createElement("div");
-  overlay.className = "preview-overlay";
-  overlay.innerHTML = `
-    <div class="preview-box">
-      <img src="${src}" alt="${alt}">
-      <span class="close-btn" aria-label="关闭预览">&times;</span>
-    </div>
-  `;
-
-  const close = () => {
-    if (overlay.parentNode) {
-      document.body.removeChild(overlay);
-    }
-  };
-
-  overlay.addEventListener("click", (event) => {
-    const target = event.target;
-    if (!(target instanceof Element)) return;
-    if (target.classList.contains("preview-overlay") || target.classList.contains("close-btn")) {
-      close();
-    }
-  });
-
-  document.body.appendChild(overlay);
 }
 
 function initMusic() {
@@ -225,26 +207,84 @@ function initMusic() {
   const playPauseBtn = document.getElementById("musicPlayPause");
   const nextBtn = document.getElementById("musicNext");
   const musicToggle = document.getElementById("musicToggle");
+
   if (!music || !musicToggle || !panel || !trackName || !prevBtn || !playPauseBtn || !nextBtn) return;
 
   music.volume = 0.55;
-  const playlist = [
-    { src: "audio/our-song.mp3", name: "我们的歌 1" },
-    { src: "audio/our-song-2.mp3", name: "我们的歌 2" },
-    { src: "audio/our-song-3.mp3", name: "我们的歌 3" }
-  ];
+  let playlist = [];
   let currentIndex = 0;
   let recentErrorCount = 0;
+
+  function getDefaultPlaylist() {
+    const source = music.querySelector("source");
+    const sourceSrc = source ? source.getAttribute("src") : "";
+    if (!sourceSrc) return [];
+    return [{ src: sourceSrc, name: "未命名歌曲", artist: "未知作者" }];
+  }
+
+  async function loadPlaylistData() {
+    try {
+      const response = await fetch("data/music-playlist.json", { cache: "no-store" });
+      if (!response.ok) throw new Error("playlist load failed");
+      const payload = await response.json();
+      if (!Array.isArray(payload)) throw new Error("playlist is not array");
+
+      playlist = payload
+        .map((item) => ({
+          src: typeof item.src === "string" ? item.src : "",
+          name: typeof item.name === "string" ? item.name : "未命名歌曲",
+          artist: typeof item.artist === "string" ? item.artist : "未知作者"
+        }))
+        .filter((item) => item.src);
+
+      if (!playlist.length) throw new Error("playlist is empty");
+    } catch (_) {
+      playlist = getDefaultPlaylist();
+    }
+  }
 
   function syncPlayPauseIcon() {
     playPauseBtn.textContent = music.paused ? "▶" : "⏸";
   }
 
+  function renderTrackNameLine(text) {
+    const line = document.createElement("div");
+    line.className = "music-track-line";
+    const content = document.createElement("span");
+    content.className = "music-track-line-text";
+    content.textContent = text || "";
+    line.appendChild(content);
+    return { line, content };
+  }
+
+  function updateTrackTitle(name, artist) {
+    trackName.innerHTML = "";
+    const mergedText = `${name} - ${artist}`;
+    const mergedLine = renderTrackNameLine(mergedText);
+    trackName.appendChild(mergedLine.line);
+
+    requestAnimationFrame(() => {
+      const { line, content } = mergedLine;
+      line.classList.remove("marquee");
+      const distance = content.scrollWidth - line.clientWidth;
+      if (distance > 2) {
+        line.style.setProperty("--marquee-distance", `${distance + 16}px`);
+        line.style.setProperty("--marquee-duration", `${Math.max(9, (distance + 16) / 10)}s`);
+        line.classList.add("marquee");
+      } else {
+        line.style.removeProperty("--marquee-distance");
+        line.style.removeProperty("--marquee-duration");
+      }
+    });
+  }
+
   async function loadTrack(index, autoPlay = false) {
+    if (!playlist.length) return;
+
     currentIndex = (index + playlist.length) % playlist.length;
     const currentTrack = playlist[currentIndex];
     music.src = currentTrack.src;
-    trackName.textContent = currentTrack.name;
+    updateTrackTitle(currentTrack.name, currentTrack.artist);
     music.load();
 
     if (autoPlay) {
@@ -291,18 +331,21 @@ function initMusic() {
   });
 
   prevBtn.addEventListener("click", () => {
+    if (!playlist.length) return;
     const autoPlay = !music.paused;
     loadTrack(currentIndex - 1, autoPlay);
     if (autoPlay) musicToggle.classList.add("playing");
   });
 
   nextBtn.addEventListener("click", () => {
+    if (!playlist.length) return;
     const autoPlay = !music.paused;
     loadTrack(currentIndex + 1, autoPlay);
     if (autoPlay) musicToggle.classList.add("playing");
   });
 
   music.addEventListener("ended", () => {
+    if (!playlist.length) return;
     loadTrack(currentIndex + 1, true);
     musicToggle.classList.add("playing");
   });
@@ -318,6 +361,7 @@ function initMusic() {
   });
 
   music.addEventListener("error", () => {
+    if (!playlist.length) return;
     recentErrorCount += 1;
     if (recentErrorCount >= playlist.length) {
       recentErrorCount = 0;
@@ -327,15 +371,49 @@ function initMusic() {
     loadTrack(currentIndex + 1, true);
   });
 
-  loadTrack(0, false);
+  loadPlaylistData().then(async () => {
+    await loadTrack(0, true);
+    if (music.paused) {
+      musicToggle.classList.remove("playing");
+      syncPlayPauseIcon();
+    }
+  });
+
+  const unlockEvents = ["pointerdown", "touchstart", "keydown"];
+  const tryForcePlayFirstTrack = async () => {
+    if (!playlist.length) return;
+    if (!music.src) {
+      await loadTrack(0, false);
+    }
+    if (music.paused) {
+      try {
+        await music.play();
+        musicToggle.classList.add("playing");
+        syncPlayPauseIcon();
+      } catch (_) {
+        musicToggle.classList.remove("playing");
+        syncPlayPauseIcon();
+      }
+    }
+  };
+
+  unlockEvents.forEach((eventName) => {
+    const handler = async () => {
+      await tryForcePlayFirstTrack();
+      if (!music.paused) {
+        unlockEvents.forEach((name) => {
+          document.removeEventListener(name, handler);
+        });
+      }
+    };
+    document.addEventListener(eventName, handler, { passive: true });
+  });
 }
 
 function updateThemeButtonLabel(isNightMode) {
   const themeToggle = document.getElementById("themeToggle");
   if (!themeToggle) return;
-  themeToggle.textContent = isNightMode
-    ? "\u2600\ufe0f"
-    : "\ud83c\udf19";
+  themeToggle.textContent = isNightMode ? "☀️" : "🌙";
 }
 
 function applyTheme(theme) {
@@ -365,10 +443,7 @@ function getAutoThemeByBeijingTime() {
   const totalMinutes = hour * 60 + minute;
   const nightStartMinutes = 18 * 60 + 30;
   const dayStartMinutes = 6 * 60 + 30;
-
-  return totalMinutes >= nightStartMinutes || totalMinutes < dayStartMinutes
-    ? "night"
-    : "day";
+  return totalMinutes >= nightStartMinutes || totalMinutes < dayStartMinutes ? "night" : "day";
 }
 
 function getMillisecondsUntilNextSwitch() {
@@ -393,16 +468,12 @@ function getManualThemeOverride() {
   const manualTheme = localStorage.getItem(MANUAL_THEME_KEY);
   const expiresAt = Number(localStorage.getItem(MANUAL_THEME_EXPIRES_KEY));
 
-  if (!manualTheme || Number.isNaN(expiresAt)) {
-    return null;
-  }
-
+  if (!manualTheme || Number.isNaN(expiresAt)) return null;
   if (Date.now() >= expiresAt) {
     localStorage.removeItem(MANUAL_THEME_KEY);
     localStorage.removeItem(MANUAL_THEME_EXPIRES_KEY);
     return null;
   }
-
   return manualTheme;
 }
 
@@ -418,7 +489,6 @@ function applyCurrentTheme() {
     applyTheme(manualTheme);
     return;
   }
-
   applyTheme(getAutoThemeByBeijingTime());
 }
 

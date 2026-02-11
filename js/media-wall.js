@@ -72,7 +72,6 @@ function openPreview(item, config) {
   const detailLines = [];
   if (item.recommender) detailLines.push(`推荐人：${item.recommender}`);
   if (item.author) detailLines.push(`作者：${item.author}`);
-  if (item.platform) detailLines.push(`平台：${item.platform}`);
   if (item.location) detailLines.push(`地点：${item.location}`);
   if (item.status) detailLines.push(`状态：${item.status}`);
   if (item.note) detailLines.push(`备注：${item.note}`);
@@ -98,7 +97,6 @@ function resolveMeta(item) {
   const parts = [];
   if (item.status) parts.push(`状态：${item.status}`);
   if (item.author) parts.push(`作者：${item.author}`);
-  if (item.platform) parts.push(`平台：${item.platform}`);
   if (item.location) parts.push(`地点：${item.location}`);
   if (!parts.length && item.time) parts.push(`记录时间：${item.time}`);
   return parts.join(" | ");
@@ -106,6 +104,7 @@ function resolveMeta(item) {
 
 function renderItems(gallery, items, config) {
   gallery.innerHTML = "";
+  const showMeta = config.kindName !== "游戏";
 
   if (!items.length) {
     renderEmpty(gallery, config);
@@ -115,11 +114,12 @@ function renderItems(gallery, items, config) {
   items.forEach((item) => {
     const card = document.createElement("article");
     card.className = "media-card";
+    const metaText = resolveMeta(item);
     card.innerHTML = `
       ${buildCover(item, "📝")}
       <div class="media-info">
         <h3 class="media-title">${item.title || "Untitled"}</h3>
-        <p class="media-meta">${resolveMeta(item)}</p>
+        ${showMeta && metaText ? `<p class="media-meta">${metaText}</p>` : ""}
       </div>
     `;
 
