@@ -1108,8 +1108,8 @@ body.theme-night .home-page-btn {
   color: var(--subtitle-color);
   font-size: 0.8rem;
   line-height: 1;
-  padding: 6px 12px;
-  min-width: 52px;
+  padding: 6px 8px;
+  min-width: 42px;
   height: 28px;
   display: inline-flex;
   align-items: center;
@@ -1353,7 +1353,7 @@ body.theme-night .home-page-btn {
 }
 
 .home-page-btn.prev {
-  margin-left: 60px;
+  margin-left: 75px;
 }
 
 .home-page-btn:disabled {
