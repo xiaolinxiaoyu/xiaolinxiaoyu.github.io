@@ -106,7 +106,7 @@ function updateCountdowns() {
   setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
   setTextById(
     "countdown_milestone_days",
-    `还有 ${milestoneRemaining} 天（第 ${nextMilestone} 天）`
+    `还有 ${milestoneRemaining} 天）`
   );
   setTextById("countdown_milestone_target", `目标日期：${formatDate(milestoneTarget)}`);
   setTextById("countdown_lin_days", `还有 ${linBirthdayRemaining} 天`);
