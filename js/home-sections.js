@@ -190,12 +190,9 @@ function createPager(currentPage, totalPages, onPageChange) {
 function scrollToFirstRenderedItem(contentEl) {
   if (!window.matchMedia("(max-width: 720px)").matches) return;
   requestAnimationFrame(() => {
-    const firstItem = contentEl.querySelector(".home-media-card, .home-record-item");
-    if (firstItem instanceof HTMLElement) {
-      firstItem.scrollIntoView({ behavior: "smooth", block: "start" });
-      return;
-    }
-    contentEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    const sectionViewer = contentEl.closest(".home-section-viewer");
+    const target = sectionViewer instanceof HTMLElement ? sectionViewer : contentEl;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
   });
 }
 
@@ -408,6 +405,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const countEl = document.getElementById("homeSectionCount");
   const contentEl = document.getElementById("homeSectionContent");
   const footerEl = document.getElementById("homeSectionFooter");
+  const collapseBtn = document.getElementById("homeSectionCollapseBtn");
 
   if (!tabs.length || !viewerEl || !titleEl || !subtitleEl || !countEl || !contentEl || !footerEl) return;
 
@@ -422,6 +420,7 @@ document.addEventListener("DOMContentLoaded", () => {
     activeToken += 1;
     activeSection = "";
     activeMediaLayoutSize = 0;
+    pageState.clear();
     viewerEl.hidden = true;
     viewerEl.setAttribute("aria-hidden", "true");
     viewerEl.removeAttribute("data-section");
@@ -433,6 +432,9 @@ document.addEventListener("DOMContentLoaded", () => {
   async function switchSection(key, force = false) {
     const config = HOME_SECTIONS[key];
     if (!config) return;
+    if (activeSection && activeSection !== key) {
+      pageState.delete(activeSection);
+    }
     if (!force && activeSection === key && cache.has(key)) return;
     activeSection = key;
 
@@ -512,6 +514,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   hideSectionViewer();
+
+  if (collapseBtn) {
+    collapseBtn.addEventListener("click", () => {
+      hideSectionViewer();
+    });
+  }
 
   tabs.forEach((tab) => {
     tab.addEventListener("click", () => {

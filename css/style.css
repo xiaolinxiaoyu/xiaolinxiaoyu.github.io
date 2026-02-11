@@ -902,6 +902,12 @@ body.theme-night .music-fab {
   border: 1px solid rgba(145, 103, 192, 0.3);
 }
 
+body.theme-night .home-section-collapse-btn {
+  background: rgba(255, 245, 255, 0.9);
+  color: #4b3066;
+  border-color: rgba(145, 103, 192, 0.3);
+}
+
 body.theme-night .music-fab.playing {
   color: #6c2f83;
 }
@@ -1067,12 +1073,37 @@ body.theme-night .home-page-btn {
   box-shadow: 0 9px 18px rgba(176, 94, 142, 0.14), var(--shadow-card);
 }
 
+.home-section-head-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+
 .home-section-head h3 {
   color: var(--card-title);
   font-size: 1.35rem;
-  margin-bottom: 8px;
+  margin-bottom: 0;
   letter-spacing: 0.02em;
   transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.home-section-collapse-btn {
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.62);
+  color: var(--subtitle-color);
+  font-size: 0.8rem;
+  line-height: 1;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.home-section-collapse-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.9;
 }
 
 #homeSectionSubtitle {

@@ -1,5 +1,10 @@
 [
   {
+    "src": "audio/BubbleGum.mp3",
+    "name": "Bubble Gum",
+    "artist": "NewJeans"
+  },
+  {
     "src": "audio/afterlike.mp3",
     "name": "After Like",
     "artist": "IVE"
@@ -8,6 +13,11 @@
     "src": "audio/雷击.mp3",
     "name": "カミナリ",
     "artist": "I Don't Like Mondays."
+  },
+  {
+    "src": "audio/Magnetic.mp3",
+    "name": "Magnetic",
+    "artist": "ILLIT"
   },
   {
     "src": "audio/ofther.mp3",
