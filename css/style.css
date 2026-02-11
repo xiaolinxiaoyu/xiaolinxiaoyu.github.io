@@ -1100,7 +1100,8 @@ body.theme-night .home-page-btn {
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-.home-section-collapse-btn {
+.home-section-collapse-btn,
+.home-page-btn {
   border: 1px solid var(--card-border);
   border-radius: 999px;
   background: rgba(255, 255, 255, 0.62);
@@ -1108,6 +1109,11 @@ body.theme-night .home-page-btn {
   font-size: 0.8rem;
   line-height: 1;
   padding: 6px 12px;
+  min-width: 52px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
@@ -1304,18 +1310,20 @@ body.theme-night .home-page-btn {
 .home-pagination {
   margin-top: auto;
   padding-top: 12px;
+  padding-right: 72px;
   width: 100%;
   position: relative;
+  min-height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 6px;
 }
 
 .home-pagination > .home-section-collapse-btn {
   position: absolute;
   right: 0;
-  top: 50%;
+  top: calc(50% + 5.3px);
   transform: translateY(-50%);
 }
 
@@ -1325,32 +1333,22 @@ body.theme-night .home-page-btn {
 
 .home-pagination-only-collapse {
   min-height: 40px;
+  padding-right: 0;
 }
 
 .home-pagination-only-collapse > .home-section-collapse-btn {
-  top: 60%;
+  margin-left: 0;
 }
 
 .home-page-info {
   font-size: 0.88rem;
   color: var(--subtitle-color);
-  min-width: 86px;
-}
-
-.home-page-btn {
-  border: 1px solid var(--card-border);
-  background: rgba(255, 255, 255, 0.82);
-  color: var(--text-main);
-  border-radius: 999px;
-  padding: 6px 12px;
-  font-size: 0.84rem;
-  cursor: pointer;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  min-width: 72px;
 }
 
 .home-page-btn:hover:not(:disabled) {
   transform: translateY(-1px);
-  box-shadow: 0 6px 12px rgba(160, 99, 132, 0.16);
+  opacity: 0.9;
 }
 
 .home-page-btn:disabled {
