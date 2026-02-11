@@ -165,6 +165,8 @@ function initCarousel() {
   let rafId = 0;
   let lastTs = 0;
   let paused = false;
+  let lastViewportWidth = window.innerWidth || 0;
+  let lastCarouselWidth = carousel.getBoundingClientRect().width || 0;
 
   const speedPxPerSec = 26;
 
@@ -177,7 +179,11 @@ function initCarousel() {
     }
   }
 
-  function measure() {
+  function measure(options = {}) {
+    const { preserveProgress = false } = options;
+    const previousBatchWidth = oneBatchWidth;
+    const previousPosX = posX;
+
     syncCardWidthWithNavCards();
     oneBatchWidth = originals.reduce((sum, img) => sum + img.getBoundingClientRect().width, 0);
     const style = window.getComputedStyle(track);
@@ -185,8 +191,19 @@ function initCarousel() {
     if (originals.length > 0) {
       oneBatchWidth += gap * originals.length;
     }
-    posX = -oneBatchWidth;
+    if (preserveProgress && previousBatchWidth > 0 && oneBatchWidth > 0) {
+      const passed = ((-previousPosX % previousBatchWidth) + previousBatchWidth) % previousBatchWidth;
+      const progress = passed / previousBatchWidth;
+      posX = -progress * oneBatchWidth;
+      if (posX >= 0) {
+        posX -= oneBatchWidth;
+      }
+    } else {
+      posX = -oneBatchWidth;
+    }
     track.style.transform = `translate3d(${posX}px, 0, 0)`;
+    lastViewportWidth = window.innerWidth || 0;
+    lastCarouselWidth = carousel.getBoundingClientRect().width || 0;
   }
 
   originals.forEach((img) => {
@@ -237,7 +254,12 @@ function initCarousel() {
       clearTimeout(resizeTimer);
     }
     resizeTimer = window.setTimeout(() => {
-      measure();
+      const nextViewportWidth = window.innerWidth || 0;
+      const nextCarouselWidth = carousel.getBoundingClientRect().width || 0;
+      const viewportWidthChanged = Math.abs(nextViewportWidth - lastViewportWidth) > 1;
+      const carouselWidthChanged = Math.abs(nextCarouselWidth - lastCarouselWidth) > 1;
+      if (!viewportWidthChanged && !carouselWidthChanged) return;
+      measure({ preserveProgress: true });
     }, 120);
   };
 
