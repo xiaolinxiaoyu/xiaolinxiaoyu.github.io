@@ -29,7 +29,9 @@
     previewTitleTemplate: "{title}",
     fallbackIcon: "🎬",
     hideMeta: true,
-    pageRows: 3
+    pageRows: 3,
+    pageSize: 10,
+    stabilizePageHeight: true
   },
   books: {
     type: "media",
@@ -45,7 +47,9 @@
     previewTitleTemplate: "{title}",
     fallbackIcon: "📘",
     hideMeta: true,
-    pageRows: 3
+    pageRows: 3,
+    pageSize: 10,
+    stabilizePageHeight: true
   },
   games: {
     type: "media",
@@ -61,7 +65,9 @@
     previewTitleTemplate: "{title}",
     fallbackIcon: "🎮",
     hideMeta: true,
-    pageRows: 3
+    pageRows: 3,
+    pageSize: 10,
+    stabilizePageHeight: true
   },
   foods: {
     type: "media",
@@ -78,7 +84,9 @@
     fallbackIcon: "🍜",
     hideNoteInDetail: true,
     hideMeta: true,
-    pageRows: 3
+    pageRows: 3,
+    pageSize: 10,
+    stabilizePageHeight: true
   },
   todos: {
     type: "records",
@@ -188,7 +196,9 @@ function createPager(currentPage, totalPages, onPageChange) {
 }
 
 function scrollToFirstRenderedItem(contentEl) {
-  if (!window.matchMedia("(max-width: 720px)").matches) return;
+  const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || (navigator.maxTouchPoints || 0) > 0;
+  if (!isMobileViewport || !isTouchDevice) return;
   requestAnimationFrame(() => {
     const sectionViewer = contentEl.closest(".home-section-viewer");
     const target = sectionViewer instanceof HTMLElement ? sectionViewer : contentEl;
@@ -196,7 +206,27 @@ function scrollToFirstRenderedItem(contentEl) {
   });
 }
 
+function stabilizeDesktopPageHeight(contentEl, sectionKey, heightState) {
+  const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || (navigator.maxTouchPoints || 0) > 0;
+  if (isMobileViewport && isTouchDevice) {
+    contentEl.style.minHeight = "";
+    return;
+  }
+  const previousMinHeight = contentEl.style.minHeight;
+  contentEl.style.minHeight = "";
+  const currentHeight = contentEl.scrollHeight || 0;
+  contentEl.style.minHeight = previousMinHeight;
+  const knownHeight = Number(heightState.get(sectionKey) || 0);
+  const nextHeight = Math.max(knownHeight, currentHeight);
+  heightState.set(sectionKey, nextHeight);
+  contentEl.style.minHeight = nextHeight > 0 ? `${nextHeight}px` : "";
+}
+
 function getMediaPageSize(contentEl, config) {
+  const fixedPageSize = Number(config.pageSize) > 0 ? Number(config.pageSize) : 0;
+  if (fixedPageSize) return fixedPageSize;
+
   const rows = Number(config.pageRows) > 0 ? Number(config.pageRows) : 0;
   if (!rows) return 0;
 
@@ -405,18 +435,29 @@ document.addEventListener("DOMContentLoaded", () => {
   const countEl = document.getElementById("homeSectionCount");
   const contentEl = document.getElementById("homeSectionContent");
   const footerEl = document.getElementById("homeSectionFooter");
+  const tabsWrapEl = document.getElementById("homeSectionTabs");
   const collapseBtn = document.getElementById("homeSectionCollapseBtn");
+  const headTopEl = viewerEl.querySelector(".home-section-head-top");
 
   if (!tabs.length || !viewerEl || !titleEl || !subtitleEl || !countEl || !contentEl || !footerEl) return;
 
   const cache = new Map();
   const pageState = new Map();
+  const sectionHeightState = new Map();
   let activeToken = 0;
   let activeSection = "";
   let activeMediaLayoutSize = 0;
   let resizeFrameId = 0;
 
-  function hideSectionViewer() {
+  function scrollToTabsTop() {
+    if (!(tabsWrapEl instanceof HTMLElement)) return;
+    requestAnimationFrame(() => {
+      tabsWrapEl.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
+  }
+
+  function hideSectionViewer(options = {}) {
+    const { scrollToTabs = false } = options;
     activeToken += 1;
     activeSection = "";
     activeMediaLayoutSize = 0;
@@ -427,6 +468,40 @@ document.addEventListener("DOMContentLoaded", () => {
     contentEl.classList.remove("is-switching");
     contentEl.removeAttribute("aria-busy");
     tabs.forEach((tab) => tab.classList.remove("is-active"));
+    if (scrollToTabs) {
+      scrollToTabsTop();
+    }
+  }
+
+  function syncCollapseButtonPlacement(config) {
+    if (!collapseBtn || !headTopEl) return;
+    const pager = contentEl.querySelector(".home-pagination");
+    if (pager) {
+      pager.appendChild(collapseBtn);
+      return;
+    }
+    if (config && config.type === "media") {
+      let actionRow = contentEl.querySelector(".home-pagination.home-pagination-only-collapse");
+      if (!actionRow) {
+        actionRow = document.createElement("div");
+        actionRow.className = "home-pagination home-pagination-only-collapse";
+        contentEl.appendChild(actionRow);
+      }
+      actionRow.appendChild(collapseBtn);
+      return;
+    }
+    if (collapseBtn.parentElement !== headTopEl) {
+      headTopEl.appendChild(collapseBtn);
+    }
+  }
+
+  function applyMediaHeightMode(config, sectionKey) {
+    if (config.stabilizePageHeight) {
+      stabilizeDesktopPageHeight(contentEl, sectionKey, sectionHeightState);
+      return;
+    }
+    sectionHeightState.delete(sectionKey);
+    contentEl.style.minHeight = "";
   }
 
   async function switchSection(key, force = false) {
@@ -444,6 +519,7 @@ document.addEventListener("DOMContentLoaded", () => {
     viewerEl.classList.add("is-switching");
     contentEl.classList.add("is-switching");
     contentEl.setAttribute("aria-busy", "true");
+    contentEl.style.minHeight = "";
 
     tabs.forEach((tab) => {
       tab.classList.toggle("is-active", tab.dataset.section === key);
@@ -473,6 +549,8 @@ document.addEventListener("DOMContentLoaded", () => {
             page,
             onPageChange: renderMediaPage
           });
+          syncCollapseButtonPlacement(config);
+          applyMediaHeightMode(config, key);
           activeMediaLayoutSize = getMediaPageSize(contentEl, config);
           if (meta.fromPager) {
             scrollToFirstRenderedItem(contentEl);
@@ -487,6 +565,8 @@ document.addEventListener("DOMContentLoaded", () => {
             page,
             onPageChange: renderRecordsPage
           });
+          syncCollapseButtonPlacement(config);
+          stabilizeDesktopPageHeight(contentEl, key, sectionHeightState);
           if (meta.fromPager) {
             scrollToFirstRenderedItem(contentEl);
           }
@@ -505,6 +585,7 @@ document.addEventListener("DOMContentLoaded", () => {
       countEl.innerText = fillTemplate(config.countTemplate, 0);
       footerEl.innerText = config.errorMain;
       renderEmpty(contentEl, config, true);
+      syncCollapseButtonPlacement(config);
       requestAnimationFrame(() => {
         viewerEl.classList.remove("is-switching");
         contentEl.classList.remove("is-switching");
@@ -517,7 +598,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (collapseBtn) {
     collapseBtn.addEventListener("click", () => {
-      hideSectionViewer();
+      hideSectionViewer({ scrollToTabs: true });
     });
   }
 
@@ -526,8 +607,11 @@ document.addEventListener("DOMContentLoaded", () => {
       const key = tab.dataset.section;
       if (!key) return;
       if (activeSection === key && !viewerEl.hidden) {
-        hideSectionViewer();
+        hideSectionViewer({ scrollToTabs: true });
         return;
+      }
+      if (!viewerEl.hidden) {
+        hideSectionViewer();
       }
       viewerEl.hidden = false;
       viewerEl.setAttribute("aria-hidden", "false");
@@ -554,6 +638,8 @@ document.addEventListener("DOMContentLoaded", () => {
           page,
           onPageChange: renderMediaPage
         });
+        syncCollapseButtonPlacement(current);
+        applyMediaHeightMode(current, activeSection);
         activeMediaLayoutSize = getMediaPageSize(contentEl, current);
       };
       renderMediaPage(pageState.get(activeSection) || 1);

@@ -1126,6 +1126,8 @@ body.theme-night .home-page-btn {
 
 .home-section-content {
   min-height: 120px;
+  display: flex;
+  flex-direction: column;
   transition: opacity 0.22s ease, transform 0.28s ease;
 }
 
@@ -1287,11 +1289,33 @@ body.theme-night .home-page-btn {
 }
 
 .home-pagination {
-  margin-top: 12px;
+  margin-top: auto;
+  padding-top: 12px;
+  width: 100%;
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
+}
+
+.home-pagination > .home-section-collapse-btn {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.home-pagination > .home-section-collapse-btn:hover {
+  transform: translateY(calc(-50% - 1px));
+}
+
+.home-pagination-only-collapse {
+  min-height: 40px;
+}
+
+.home-pagination-only-collapse > .home-section-collapse-btn {
+  top: 60%;
 }
 
 .home-page-info {
@@ -1603,6 +1627,17 @@ body.theme-night .home-page-btn {
     height: 64px;
     right: 5%;
     top: 7%;
+  }
+
+  body:not(.theme-night) .day-heart {
+    opacity: 0.56;
+    filter: drop-shadow(0 4px 8px rgba(244, 194, 216, 0.2));
+  }
+
+  body:not(.theme-night) .day-heart::before {
+    font-size: calc(var(--heart-size, 22px) * 0.68);
+    color: #f8cfe0;
+    text-shadow: 0 0 6px rgba(248, 207, 224, 0.28);
   }
 
   .corner-tools {
