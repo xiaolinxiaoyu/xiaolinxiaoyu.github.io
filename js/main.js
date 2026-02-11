@@ -3,6 +3,7 @@ const SECONDS_PER_DAY = 24 * 60 * 60;
 const MS_PER_DAY = SECONDS_PER_DAY * 1000;
 const MANUAL_THEME_KEY = "manual_home_theme";
 const MANUAL_THEME_EXPIRES_KEY = "manual_home_theme_expires_at";
+let autoThemeTimerId = null;
 
 const beijingTimeFormatter = new Intl.DateTimeFormat("zh-CN", {
   timeZone: "Asia/Shanghai",
@@ -540,6 +541,18 @@ function getMillisecondsUntilNextSwitch() {
   return Math.max((targetSeconds - totalSeconds) * 1000, 1000);
 }
 
+function scheduleAutoThemeSwitch() {
+  if (autoThemeTimerId) {
+    clearTimeout(autoThemeTimerId);
+  }
+
+  const delay = getMillisecondsUntilNextSwitch() + 300;
+  autoThemeTimerId = setTimeout(() => {
+    applyCurrentTheme();
+    scheduleAutoThemeSwitch();
+  }, delay);
+}
+
 function getManualThemeOverride() {
   const manualTheme = localStorage.getItem(MANUAL_THEME_KEY);
   const expiresAt = Number(localStorage.getItem(MANUAL_THEME_EXPIRES_KEY));
@@ -578,10 +591,25 @@ function initTheme() {
       const nextTheme = isNightMode ? "day" : "night";
       applyTheme(nextTheme);
       setManualThemeOverride(nextTheme);
+      scheduleAutoThemeSwitch();
     });
   }
 
-  setInterval(applyCurrentTheme, 30 * 1000);
+  scheduleAutoThemeSwitch();
+
+  setInterval(applyCurrentTheme, 60 * 1000);
+
+  const syncThemeWhenActive = () => {
+    applyCurrentTheme();
+    scheduleAutoThemeSwitch();
+  };
+
+  document.addEventListener("visibilitychange", () => {
+    if (!document.hidden) {
+      syncThemeWhenActive();
+    }
+  });
+  window.addEventListener("focus", syncThemeWhenActive);
 }
 
 updateTogetherTime();
