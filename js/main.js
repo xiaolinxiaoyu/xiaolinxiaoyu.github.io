@@ -315,7 +315,9 @@ function initMusic() {
   }
 
   function syncPlayPauseIcon() {
-    playPauseBtn.textContent = music.paused ? "▶" : "⏸";
+    const playIconSvg = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6l10 6-10 6z"></path></svg>';
+    const pauseIconSvg = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 6h3v12H8zM13 6h3v12h-3z"></path></svg>';
+    playPauseBtn.innerHTML = music.paused ? playIconSvg : pauseIconSvg;
   }
 
   function renderTrackNameLine(text) {
