@@ -1,13 +1,13 @@
 [
   {
     "title": "狂飙",
-    "imageUrl": "images/moives/kb.JPG",
+    "imageUrl": "images/moives/kb.jpg",
     "time": "2026-02-15",
     "alt": "狂飙"
   },
   {
     "title": "你的名字",
-    "imageUrl": "images/moives/1.JPG",
+    "imageUrl": "images/moives/1.jpg",
     "time": "2026-02-14",
     "alt": "你的名字"
   },
@@ -25,13 +25,13 @@
   },
   {
     "title": "挪威的森林",
-    "imageUrl": "images/moives/nwsl.JPG",
+    "imageUrl": "images/moives/nwsl.jpg",
     "time": "2026-01-24",
     "alt": "挪威的森林"
   },
   {
     "title": "溺水小刀",
-    "imageUrl": "images/moives/nsxd.JPG",
+    "imageUrl": "images/moives/nsxd.jpg",
     "time": "2026-01-24",
     "alt": "溺水小刀"
   },
