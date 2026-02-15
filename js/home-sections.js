@@ -104,7 +104,8 @@
     secondaryMeta: "summary",
     detailKey: "detail",
     timeAtEnd: true,
-    pageSize: 5
+    pageSize: 5,
+    pinnedTitles: ["⭐影视待看列表", "⭐游戏待玩列表"]
   }
 };
 
@@ -134,6 +135,28 @@ function compareByTimeDesc(a, b) {
   if (Number.isNaN(ta)) return 1;
   if (Number.isNaN(tb)) return -1;
   return tb - ta;
+}
+
+function compareRecords(a, b, config) {
+  const pinnedTitles = Array.isArray(config.pinnedTitles) ? config.pinnedTitles : [];
+  if (pinnedTitles.length) {
+    const ai = pinnedTitles.indexOf(a.title || "");
+    const bi = pinnedTitles.indexOf(b.title || "");
+    const aPinned = ai !== -1;
+    const bPinned = bi !== -1;
+
+    if (aPinned && bPinned) return ai - bi;
+    if (aPinned) return -1;
+    if (bPinned) return 1;
+  }
+
+  const aDone = Number(a.status) === 3;
+  const bDone = Number(b.status) === 3;
+  if (aDone !== bDone) {
+    return aDone ? 1 : -1;
+  }
+
+  return compareByTimeDesc(a, b);
 }
 
 function getStatusBadge(status) {
@@ -363,7 +386,7 @@ function renderRecords(contentEl, items, config, options = {}) {
     return;
   }
 
-  const sorted = [...items].sort(compareByTimeDesc);
+  const sorted = [...items].sort((a, b) => compareRecords(a, b, config));
   const pageSize = Number(config.pageSize) > 0 ? Number(config.pageSize) : 0;
   const totalPages = pageSize ? Math.ceil(sorted.length / pageSize) : 1;
   const currentPage = clampPage(options.page, totalPages);
