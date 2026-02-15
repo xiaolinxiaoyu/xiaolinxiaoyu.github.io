@@ -1,18 +1,18 @@
 [
   {
-    "title": "追风筝的人",
-    "imageUrl": "images/books/IMG_6440.JPG",
-    "time": "2025-10-29",
+    "title":  "追风筝的人",
+    "imageUrl":  "images/books/IMG_6440.JPG",
+    "time":  "2025-10-29",
     "author": "卡勒德·胡赛尼",
     "recommender": "小林",
-    "alt": "追风筝的人"
+    "alt":  "追风筝的人"
   },
   {
-    "title": "挪威的森林",
-    "imageUrl": "images/books/IMG_6439.JPG",
-    "time": "2025-10-23",
+    "title":  "挪威的森林",
+    "imageUrl":  "images/books/IMG_6439.JPG",
+    "time":  "2025-10-23",
     "author": "村上春树",
     "recommender": "小林",
-    "alt": "挪威的森林"
+    "alt":  "挪威的森林"
   }
 ]
