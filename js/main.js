@@ -1,4 +1,4 @@
-const startDate = new Date(2025, 10, 25, 0, 0, 0);
+﻿const startDate = new Date(2025, 10, 25, 0, 0, 0);
 const SECONDS_PER_DAY = 24 * 60 * 60;
 const MS_PER_DAY = SECONDS_PER_DAY * 1000;
 const MANUAL_THEME_KEY = "manual_home_theme";
@@ -36,6 +36,10 @@ function setTextById(id, text) {
   }
 }
 
+
+function formatCountdownDays(remainingDays) {
+  return remainingDays === 0 ? "就在今天！" : `还有 ${remainingDays} 天`;
+}
 function updateTogetherTime() {
   const now = new Date();
   const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -99,19 +103,23 @@ function updateCountdowns() {
     0,
     Math.round((valentineTarget - todayDate) / MS_PER_DAY)
   );
-
-  setTextById("countdown_valentine_days", `还有 ${valentineRemaining} 天`);
-  setTextById("countdown_valentine_target", `目标日期：${formatDate(valentineTarget)}`);
-  setTextById("countdown_anniversary_days", `还有 ${anniversaryRemaining} 天`);
-  setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
-  setTextById(
-    "countdown_milestone_days",
-    `还有 ${milestoneRemaining} 天`
+  const mayTwentyTarget = getNextBirthdayTarget(todayDate, 5, 20);
+  const mayTwentyRemaining = Math.max(
+    0,
+    Math.round((mayTwentyTarget - todayDate) / MS_PER_DAY)
   );
+
+  setTextById("countdown_valentine_days", formatCountdownDays(valentineRemaining));
+  setTextById("countdown_valentine_target", `目标日期：${formatDate(valentineTarget)}`);
+  setTextById("countdown_520_days", formatCountdownDays(mayTwentyRemaining));
+  setTextById("countdown_520_target", `目标日期：${formatDate(mayTwentyTarget)}`);
+  setTextById("countdown_anniversary_days", formatCountdownDays(anniversaryRemaining));
+  setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
+  setTextById("countdown_milestone_days", formatCountdownDays(milestoneRemaining));
   setTextById("countdown_milestone_target", `目标日期：${formatDate(milestoneTarget)}`);
-  setTextById("countdown_lin_days", `还有 ${linBirthdayRemaining} 天`);
+  setTextById("countdown_lin_days", formatCountdownDays(linBirthdayRemaining));
   setTextById("countdown_lin_target", `目标日期：${formatDate(linBirthdayTarget)}`);
-  setTextById("countdown_yu_days", `还有 ${yuBirthdayRemaining} 天`);
+  setTextById("countdown_yu_days", formatCountdownDays(yuBirthdayRemaining));
   setTextById("countdown_yu_target", `目标日期：${formatDate(yuBirthdayTarget)}`);
 }
 
@@ -121,7 +129,7 @@ function openImagePreview(src, alt) {
   overlay.innerHTML = `
     <div class="preview-box">
       <img src="${src}" alt="${alt}">
-      <span class="close-btn" aria-label="关闭预览">&times;</span>
+      <span class="close-btn" aria-label="鍏抽棴棰勮">&times;</span>
     </div>
   `;
 
@@ -168,7 +176,7 @@ function initCarousel() {
   let lastViewportWidth = window.innerWidth || 0;
   let lastCarouselWidth = carousel.getBoundingClientRect().width || 0;
 
-  const speedPxPerSec = 26;
+  const speedPxPerSec = 12;
 
   function syncCardWidthWithNavCards() {
     const firstNavCard = document.querySelector(".nav-cards .card");
@@ -295,7 +303,7 @@ function initMusic() {
 
   async function loadPlaylistData() {
     try {
-      const response = await fetch("data/music-playlist.json", { cache: "no-store" });
+      const response = await fetch("data/music.json", { cache: "no-store" });
       if (!response.ok) throw new Error("playlist load failed");
       const payload = await response.json();
       if (!Array.isArray(payload)) throw new Error("playlist is not array");
@@ -486,7 +494,7 @@ function initMusic() {
 function updateThemeButtonLabel(isNightMode) {
   const themeToggle = document.getElementById("themeToggle");
   if (!themeToggle) return;
-  themeToggle.textContent = isNightMode ? "☀️" : "🌙";
+  themeToggle.textContent = isNightMode ? "🌙" : "☀️";
 }
 
 function forceThemeLayerRepaint() {
@@ -637,3 +645,5 @@ initMusic();
 initTheme();
 setInterval(updateTogetherTime, 1000);
 setInterval(updateCountdowns, 60 * 1000);
+
+

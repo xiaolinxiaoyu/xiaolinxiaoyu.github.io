@@ -1,34 +1,29 @@
 [
   {
-    "id": 5,
-    "title": "马力欧赛车8",
-    "imageUrl": "images/index/5.png",
-    "time": "2026-02-07",
-    "alt": "马力欧赛车8"
+    "title": "Sally Face",
+    "imageUrl": "images/games/IMG_6463.JPG",
+    "time": "2025-11-13",
+    "alt": "Sally Face"
   },
   {
-    "id": 4,
-    "title": "原神",
-    "imageUrl": "images/index/3.png",
-    "time": "2026-01-21",
-    "alt": "原神"
-  },
-  {
-    "id": 3,
-    "title": "胡闹厨房2",
-    "imageUrl": "images/index/2.png",
-    "time": "2026-01-03",
-    "alt": "胡闹厨房2"
-  },
-  {
-    "id": 2,
     "title": "星露谷物语",
-    "imageUrl": "images/index/1.png",
-    "time": "2025-12-16",
+    "imageUrl": "images/games/IMG_6435.JPG",
+    "time": "2025-10-15",
     "alt": "星露谷物语"
   },
   {
-    "id": 1,
+    "title": "三伏",
+    "imageUrl": "images/games/IMG_6434.JPG",
+    "time": "2025-10-13",
+    "alt": "三伏 SANFU"
+  },
+  {
+    "title": "还愿",
+    "imageUrl": "images/games/hy.JPG",
+    "time": "2025-10-09",
+    "alt": "還願 Devotion"
+  },
+  {
     "title": "双人成行",
     "imageUrl": "images/games/1.png",
     "time": "2025-08-09",

@@ -1,32 +1,33 @@
-[
+﻿[
   {
-    "src": "audio/BubbleGum.mp3",
+    "src": "music/BubbleGum.mp3",
     "name": "Bubble Gum",
     "artist": "NewJeans"
   },
   {
-    "src": "audio/afterlike.mp3",
+    "src": "music/afterlike.mp3",
     "name": "After Like",
     "artist": "IVE"
   },
   {
-    "src": "audio/thunder.mp3",
+    "src": "music/thunder.mp3",
     "name": "カミナリ",
     "artist": "I Don't Like Mondays."
   },
   {
-    "src": "audio/Magnetic.mp3",
+    "src": "music/Magnetic.mp3",
     "name": "Magnetic",
     "artist": "ILLIT"
   },
   {
-    "src": "audio/ofther.mp3",
+    "src": "music/ofther.mp3",
     "name": "Off the Record",
     "artist": "IVE"
   },
   {
-    "src": "audio/Lemonade.mp3",
+    "src": "music/Lemonade.mp3",
     "name": "Lemonade",
     "artist": "I Don't Like Mondays."
   }
 ]
+

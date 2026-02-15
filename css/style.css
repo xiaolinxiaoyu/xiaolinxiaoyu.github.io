@@ -974,21 +974,21 @@ body.theme-night .home-page-btn {
 
 .countdown-grid {
   display: grid;
-  grid-template-columns: repeat(5, minmax(150px, 1fr));
-  gap: 12px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 10px;
 }
 
 .countdown-card {
   border: 1px solid var(--card-border);
   border-radius: 12px;
   background: var(--card-bg);
-  padding: 12px;
+  padding: 10px 8px;
 }
 
 .countdown-card h4 {
   color: var(--card-title);
-  font-size: 0.93rem;
-  margin-bottom: 8px;
+  font-size: 0.88rem;
+  margin-bottom: 6px;
 }
 
 .countdown-card p:first-of-type {
@@ -998,7 +998,7 @@ body.theme-night .home-page-btn {
 }
 
 .countdown-card p:last-of-type {
-  font-size: 0.82rem;
+  font-size: 0.78rem;
   color: var(--subtitle-color);
 }
 
