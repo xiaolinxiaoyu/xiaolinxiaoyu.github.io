@@ -1,5 +1,19 @@
 [
   {
+    "title": "⭐游戏待玩列表",
+    "time": "2025-08-09",
+    "status": 2,
+    "summary": "游戏待玩列表记录ing~Forever！",
+    "detail": "纸房子"
+  },
+  {
+    "title": "⭐影视待看列表",
+    "time": "2025-08-17",
+    "status": 2,
+    "summary": "影视待看列表记录ing~Forever！",
+    "detail": "下妻物语 / 今夜就算这份爱恋从世界上消失 / 宝石之国"
+  },
+  {
     "title": "大连旅游！",
     "time": "2026-01-01",
     "status": 1,
@@ -12,19 +26,5 @@
     "status": 1,
     "summary": "国庆去日本一起旅游！",
     "detail": "国庆去日本一起旅游！狠狠玩嘿嘿！"
-  },
-  {
-    "title": "⭐游戏待玩列表",
-    "time": "2025-08-09",
-    "status": 2,
-    "summary": "游戏待玩列表记录ing~Forever！",
-    "detail": "纸房子"
-  },
-  {
-    "title": "⭐影视待看列表",
-    "time": "2025-08-17",
-    "status": 2,
-    "summary": "影视待看列表记录ing~Forever！",
-    "detail": "..."
   }
 ]
