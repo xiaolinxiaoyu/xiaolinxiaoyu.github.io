@@ -98,7 +98,7 @@
     countTemplate: "📝小林和小鱼共有 {count} 项计划！",
     emptyMain: "还没有待办事项",
     emptySub: "先写下第一件想一起做的事吧~",
-    errorMain: "TODO 数据加载失败",
+    errorMain: "TODOs 数据加载失败",
     errorSub: "请检查 data/todos.json 是否可访问",
     footerTemplate: "📝 共 {count} 项计划 | 说好就去做",
     showThumb: false,
