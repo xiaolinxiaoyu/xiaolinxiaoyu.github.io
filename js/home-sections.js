@@ -13,6 +13,8 @@
     showThumb: true,
     primaryMeta: "",
     secondaryMeta: "note",
+    detailKey: "detail",
+    timeAtEnd: true,
     pageSize: 5
   },
   movies: {
@@ -303,15 +305,29 @@ function openMediaPreview(item, config) {
   `);
 }
 
-function openTodoDetail(item) {
-  if (!item.detail) return;
+function getRecordDetailText(item, config) {
+  const detailKey = config.detailKey || "detail";
+  const detail = item[detailKey];
+  if (typeof detail === "string" && detail.trim()) return detail;
+  if (typeof item.note === "string" && item.note.trim()) return item.note;
+  return "";
+}
+
+function openRecordDetail(item, config) {
+  const detailText = getRecordDetailText(item, config) || "暂无详细记录";
+  const statusBadge = config.primaryMeta === "status" ? getStatusBadge(item.status) : "";
+  const image = item.imageUrl
+    ? `<img class="home-detail-image" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "记录原图")}" loading="lazy">`
+    : "";
+
   openOverlay(`
     <div class="home-detail-modal">
       <div class="home-detail-head">
         <h4>${escapeHtml(item.title || "Untitled")}</h4>
-        ${getStatusBadge(item.status)}
+        ${statusBadge}
       </div>
-      <p class="home-detail-content">${escapeHtml(item.detail)}</p>
+      ${image}
+      <p class="home-detail-content">${escapeHtml(detailText)}</p>
       <p class="home-detail-time">${escapeHtml(item.time || "未知时间")}</p>
     </div>
   `);
@@ -400,7 +416,9 @@ function renderRecords(contentEl, items, config, options = {}) {
   visibleItems.forEach((item) => {
     const row = document.createElement("li");
     const hasThumb = Boolean(config.showThumb && item.imageUrl);
-    row.className = `home-record-item${hasThumb ? " has-thumb" : ""}${item.detail ? " is-clickable" : ""}`;
+    const detailText = getRecordDetailText(item, config);
+    const canOpenDetail = Boolean(detailText || item.imageUrl);
+    row.className = `home-record-item${hasThumb ? " has-thumb" : ""}${canOpenDetail ? " is-clickable" : ""}`;
 
     const thumb = hasThumb
       ? `<img class="home-record-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "记录图片")}" loading="lazy">`
@@ -427,8 +445,8 @@ function renderRecords(contentEl, items, config, options = {}) {
       </div>
     `;
 
-    if (item.detail) {
-      row.addEventListener("click", () => openTodoDetail(item));
+    if (canOpenDetail) {
+      row.addEventListener("click", () => openRecordDetail(item, config));
     }
 
     list.appendChild(row);

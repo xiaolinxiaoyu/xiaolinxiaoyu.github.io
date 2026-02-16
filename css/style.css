@@ -1289,8 +1289,13 @@ body.theme-night .home-page-btn {
 }
 
 .home-record-item.has-thumb .home-record-main {
-  grid-template-columns: 90px 1fr;
+  grid-template-columns: 82px 1fr;
   align-items: start;
+}
+
+.home-record-item.has-thumb .home-record-body {
+  display: flex;
+  flex-direction: column;
 }
 
 .home-record-body {
@@ -1298,9 +1303,10 @@ body.theme-night .home-page-btn {
 }
 
 .home-record-thumb {
-  width: 90px;
-  height: 90px;
-  object-fit: fill;
+  width: 82px;
+  height: 72px;
+  align-self: end;
+  object-fit: cover;
   object-position: center;
   border-radius: 10px;
 }
@@ -1557,6 +1563,15 @@ body.theme-night .home-page-btn {
   color: #666;
 }
 
+.home-detail-image {
+  width: 100%;
+  max-height: 70vh;
+  margin-top: 10px;
+  border-radius: 10px;
+  object-fit: contain;
+  background: #f6f6f6;
+}
+
 .home-detail-content {
   margin-top: 10px;
   line-height: 1.7;
@@ -1679,12 +1694,12 @@ body.theme-night .home-page-btn {
   }
 
   .home-record-item.has-thumb .home-record-main {
-    grid-template-columns: 72px 1fr;
+    grid-template-columns: 66px 1fr;
   }
 
   .home-record-thumb {
-    width: 72px;
-    height: 72px;
+    width: 66px;
+    height: 66px;
   }
 
   .home-record-head {
