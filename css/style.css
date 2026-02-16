@@ -1132,6 +1132,13 @@ body.theme-night .home-page-btn {
   }
 }
 
+@media (max-width: 720px) {
+  #homeSectionTitle {
+    position: relative;
+    left: 25px;
+  }
+}
+
 .home-section-collapse-btn,
 .home-page-btn {
   border: 1px solid var(--card-border);
@@ -1216,6 +1223,13 @@ body.theme-night .home-page-btn {
   display: block;
   backface-visibility: hidden;
   transform: translateZ(0);
+}
+
+.home-section-viewer[data-section="movies"] .home-media-cover,
+.home-section-viewer[data-section="books"] .home-media-cover,
+.home-section-viewer[data-section="games"] .home-media-cover,
+.home-section-viewer[data-section="foods"] .home-media-cover {
+  object-fit: cover;
 }
 
 .home-media-cover-placeholder {
