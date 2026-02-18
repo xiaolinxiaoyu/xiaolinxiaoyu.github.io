@@ -1036,9 +1036,11 @@ body.theme-night .home-page-btn {
   transition: transform 0.25s, box-shadow 0.25s;
 }
 
-.card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-card-hover);
+@media (hover: hover) and (pointer: fine) {
+  .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-card-hover);
+  }
 }
 
 .card img {
@@ -1471,6 +1473,10 @@ body.theme-night .home-page-btn {
 .home-record-item:nth-child(7) { animation-delay: 0.21s; }
 .home-media-card:nth-child(8),
 .home-record-item:nth-child(8) { animation-delay: 0.24s; }
+.home-media-card:nth-child(9),
+.home-record-item:nth-child(9) { animation-delay: 0.27s; }
+.home-media-card:nth-child(10),
+.home-record-item:nth-child(10) { animation-delay: 0.3s; }
 
 @media (prefers-reduced-motion: reduce) {
   .home-section-viewer,

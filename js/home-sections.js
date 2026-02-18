@@ -22,6 +22,7 @@
     jsonPath: "data/movies.json",
     title: "观影墙",
     subtitle: "电影会落幕，小林和小鱼不会ʚ՞˶> <˶՞ɞ",
+    countOffset: 7 + 10,
     countTemplate: "🎬小林和小鱼一起看了 {count} 部影视作品！",
     emptyMain: "还没有添加影视作品",
     emptySub: "把下一部想看的片子放进来吧~",
@@ -122,6 +123,10 @@ function escapeHtml(value) {
 
 function fillTemplate(template, count) {
   return template.replace("{count}", String(count));
+}
+
+function getDisplayCount(config, count) {
+  return count + (Number(config.countOffset) || 0);
 }
 
 function formatPreview(template, item) {
@@ -510,6 +515,9 @@ document.addEventListener("DOMContentLoaded", () => {
     contentEl.classList.remove("is-switching");
     contentEl.removeAttribute("aria-busy");
     tabs.forEach((tab) => tab.classList.remove("is-active"));
+    if (document.activeElement instanceof HTMLElement) {
+      document.activeElement.blur();
+    }
     if (scrollToTabs) {
       scrollToTabsTop();
     }
@@ -575,7 +583,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     titleEl.innerText = config.title;
     subtitleEl.innerText = config.subtitle;
-    countEl.innerText = fillTemplate(config.countTemplate, 0);
+    countEl.innerText = fillTemplate(config.countTemplate, getDisplayCount(config, 0));
     footerEl.innerText = "";
     contentEl.innerHTML = '<div class="home-empty"><p>加载中...</p></div>';
 
@@ -587,7 +595,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       if (token !== activeToken) return;
 
-      countEl.innerText = fillTemplate(config.countTemplate, items.length);
+      countEl.innerText = fillTemplate(config.countTemplate, getDisplayCount(config, items.length));
       footerEl.innerText = "";
 
       if (config.type === "media") {
@@ -630,7 +638,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       if (token !== activeToken) return;
       console.error(error);
-      countEl.innerText = fillTemplate(config.countTemplate, 0);
+      countEl.innerText = fillTemplate(config.countTemplate, getDisplayCount(config, 0));
       footerEl.innerText = "";
       renderEmpty(contentEl, config, true);
       syncCollapseButtonPlacement(config);
