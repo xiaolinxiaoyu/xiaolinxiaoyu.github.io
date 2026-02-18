@@ -175,8 +175,34 @@ function initCarousel() {
   let paused = false;
   let lastViewportWidth = window.innerWidth || 0;
   let lastCarouselWidth = carousel.getBoundingClientRect().width || 0;
+  let suppressClickUntil = 0;
+  let touchActive = false;
+  let touchId = -1;
+  let touchStartX = 0;
+  let touchStartY = 0;
+  let touchLastX = 0;
+  let touchLastY = 0;
+  let touchDragging = false;
+  let touchHorizontal = false;
 
   const speedPxPerSec = 12;
+  const gestureLockThresholdPx = 6;
+  const swipeTriggerPx = 10;
+
+  function normalizePosX() {
+    if (oneBatchWidth <= 0) return;
+    const wrapped = ((posX % oneBatchWidth) + oneBatchWidth) % oneBatchWidth;
+    posX = wrapped === 0 ? -oneBatchWidth : wrapped - oneBatchWidth;
+  }
+
+  function findTouchById(touchList, id) {
+    for (let i = 0; i < touchList.length; i += 1) {
+      if (touchList[i].identifier === id) {
+        return touchList[i];
+      }
+    }
+    return null;
+  }
 
   function syncCardWidthWithNavCards() {
     const firstNavCard = document.querySelector(".nav-cards .card");
@@ -227,15 +253,17 @@ function initCarousel() {
 
     if (!paused && oneBatchWidth > 0) {
       posX += speedPxPerSec * delta;
-      if (posX >= 0) {
-        posX -= oneBatchWidth;
-      }
+      normalizePosX();
       track.style.transform = `translate3d(${posX}px, 0, 0)`;
     }
     rafId = requestAnimationFrame(tick);
   }
 
   track.addEventListener("click", (event) => {
+    if (Date.now() < suppressClickUntil) {
+      event.preventDefault();
+      return;
+    }
     const target = event.target;
     if (!(target instanceof HTMLImageElement)) return;
     const originalSrc = target.getAttribute("src");
@@ -249,12 +277,68 @@ function initCarousel() {
   carousel.addEventListener("mouseleave", () => {
     paused = false;
   });
-  carousel.addEventListener("touchstart", () => {
+  carousel.addEventListener("touchstart", (event) => {
+    if (!event.changedTouches.length || touchActive) return;
+    const touch = event.changedTouches[0];
+    touchActive = true;
+    touchId = touch.identifier;
+    touchStartX = touch.clientX;
+    touchStartY = touch.clientY;
+    touchLastX = touch.clientX;
+    touchLastY = touch.clientY;
+    touchDragging = false;
+    touchHorizontal = false;
     paused = true;
   }, { passive: true });
-  carousel.addEventListener("touchend", () => {
+
+  carousel.addEventListener("touchmove", (event) => {
+    if (!touchActive) return;
+    const touch = findTouchById(event.changedTouches, touchId) || findTouchById(event.touches, touchId);
+    if (!touch) return;
+
+    const nextX = touch.clientX;
+    const nextY = touch.clientY;
+    const totalX = nextX - touchStartX;
+    const totalY = nextY - touchStartY;
+
+    if (!touchDragging) {
+      if (Math.abs(totalX) < gestureLockThresholdPx && Math.abs(totalY) < gestureLockThresholdPx) return;
+      touchDragging = true;
+      touchHorizontal = Math.abs(totalX) > Math.abs(totalY);
+    }
+
+    const deltaX = nextX - touchLastX;
+    touchLastX = nextX;
+    touchLastY = nextY;
+
+    if (!touchHorizontal) return;
+    if (oneBatchWidth > 0 && deltaX !== 0) {
+      posX += deltaX;
+      normalizePosX();
+      track.style.transform = `translate3d(${posX}px, 0, 0)`;
+    }
+    event.preventDefault();
+  }, { passive: false });
+
+  const finishTouchDrag = (event) => {
+    if (!touchActive) return;
+    const touch = findTouchById(event.changedTouches, touchId);
+    if (!touch) return;
+
+    const movedX = Math.abs(touch.clientX - touchStartX);
+    if (touchDragging && touchHorizontal && movedX >= swipeTriggerPx) {
+      suppressClickUntil = Date.now() + 260;
+    }
+
+    touchActive = false;
+    touchId = -1;
+    touchDragging = false;
+    touchHorizontal = false;
     paused = false;
-  }, { passive: true });
+  };
+
+  carousel.addEventListener("touchend", finishTouchDrag, { passive: true });
+  carousel.addEventListener("touchcancel", finishTouchDrag, { passive: true });
 
   let resizeTimer = 0;
   const onResize = () => {
