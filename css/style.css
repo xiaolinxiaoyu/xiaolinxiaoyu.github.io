@@ -185,10 +185,19 @@ body.theme-night .moon {
 
 .day-heart::before {
   display: block;
-  content: "\2764\FE0E";
-  font-size: var(--heart-size, 22px);
-  color: var(--heart-color, #f6b3d4);
-  text-shadow: 0 0 8px rgba(248, 182, 216, 0.45);
+  content: "";
+  width: var(--heart-size, 22px);
+  height: var(--heart-size, 22px);
+  background: var(--heart-color, #f6b3d4);
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z'/%3E%3C/svg%3E");
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  -webkit-mask-size: contain;
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54z'/%3E%3C/svg%3E");
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+  filter: drop-shadow(0 0 6px rgba(248, 182, 216, 0.42));
 }
 
 .heart-a {
@@ -1860,8 +1869,9 @@ body.theme-night .home-page-btn {
   }
 
   body:not(.theme-night) .day-heart::before {
-    font-size: calc(var(--heart-size, 15px) * 0.72);
-    text-shadow: 0 0 4px rgba(249, 215, 232, 0.2);
+    width: calc(var(--heart-size, 15px) * 0.72);
+    height: calc(var(--heart-size, 15px) * 0.72);
+    filter: drop-shadow(0 0 3px rgba(249, 215, 232, 0.2));
   }
 
   body:not(.theme-night) .heart-a,
