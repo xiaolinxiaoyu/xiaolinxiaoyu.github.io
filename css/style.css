@@ -1857,12 +1857,10 @@ body.theme-night .home-page-btn {
     opacity: 0.48;
     filter: drop-shadow(0 3px 6px rgba(247, 207, 225, 0.16));
     --heart-size: 15px;
-    --heart-color: #FCE5F0;
   }
 
   body:not(.theme-night) .day-heart::before {
     font-size: calc(var(--heart-size, 15px) * 0.72);
-    color: var(--heart-color, #FCE5F0);
     text-shadow: 0 0 4px rgba(249, 215, 232, 0.2);
   }
 
