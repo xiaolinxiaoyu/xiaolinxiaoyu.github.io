@@ -455,16 +455,20 @@ function openRecordDetail(item, config) {
   if (prevBtn instanceof HTMLButtonElement) {
     prevBtn.addEventListener("click", () => {
       const width = track.clientWidth || 1;
-      const current = Math.round(track.scrollLeft / width);
-      scrollToIndex(current - 1);
+      const maxIndex = images.length - 1;
+      const current = Math.max(0, Math.min(maxIndex, Math.round(track.scrollLeft / width)));
+      const target = current <= 0 ? maxIndex : current - 1;
+      scrollToIndex(target);
     });
   }
 
   if (nextBtn instanceof HTMLButtonElement) {
     nextBtn.addEventListener("click", () => {
       const width = track.clientWidth || 1;
-      const current = Math.round(track.scrollLeft / width);
-      scrollToIndex(current + 1);
+      const maxIndex = images.length - 1;
+      const current = Math.max(0, Math.min(maxIndex, Math.round(track.scrollLeft / width)));
+      const target = current >= maxIndex ? 0 : current + 1;
+      scrollToIndex(target);
     });
   }
 
