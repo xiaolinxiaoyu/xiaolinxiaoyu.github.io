@@ -185,7 +185,7 @@ body.theme-night .moon {
 
 .day-heart::before {
   display: block;
-  content: "\2764";
+  content: "\2764\FE0E";
   font-size: var(--heart-size, 22px);
   color: var(--heart-color, #f6b3d4);
   text-shadow: 0 0 8px rgba(248, 182, 216, 0.45);
