@@ -33,6 +33,52 @@ function updateText(config, count) {
   if (countEl) countEl.innerText = config.countTemplate.replace("{count}", String(count));
 }
 
+let deferredImageObserver = null;
+
+function revealDeferredImage(img) {
+  if (!(img instanceof HTMLImageElement)) return;
+  const dataSrc = img.getAttribute("data-src");
+  if (!dataSrc) return;
+  img.setAttribute("src", dataSrc);
+  img.removeAttribute("data-src");
+  if (!img.hasAttribute("loading")) {
+    img.setAttribute("loading", "lazy");
+  }
+  if (!img.hasAttribute("decoding")) {
+    img.setAttribute("decoding", "async");
+  }
+}
+
+function hydrateDeferredImages(root) {
+  if (!(root instanceof Element) && root !== document) return;
+  const scope = root === document ? document : root;
+  const images = scope.querySelectorAll("img[data-src]");
+  if (!images.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    images.forEach((img) => revealDeferredImage(img));
+    return;
+  }
+
+  if (!deferredImageObserver) {
+    deferredImageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const target = entry.target;
+        if (!(target instanceof HTMLImageElement)) return;
+        revealDeferredImage(target);
+        deferredImageObserver.unobserve(target);
+      });
+    }, {
+      root: null,
+      rootMargin: "180px 0px",
+      threshold: 0.01
+    });
+  }
+
+  images.forEach((img) => deferredImageObserver.observe(img));
+}
+
 function compareByTimeDesc(a, b) {
   const ta = Date.parse(a.time || "");
   const tb = Date.parse(b.time || "");
@@ -118,7 +164,7 @@ function renderList(listEl, items, config) {
     li.className = `record-item${config.showThumb && item.imageUrl ? " record-has-thumb" : ""}`;
 
     const thumb = config.showThumb && item.imageUrl
-      ? `<img class="record-thumb" src="${item.imageUrl}" alt="${item.alt || item.title || "记录图片"}" loading="lazy">`
+      ? `<img class="record-thumb" data-src="${item.imageUrl}" alt="${item.alt || item.title || "记录图片"}" loading="lazy" decoding="async">`
       : "";
 
     const primaryMeta = getMetaValue(item, config.primaryMeta);
@@ -149,6 +195,8 @@ function renderList(listEl, items, config) {
 
     listEl.appendChild(li);
   });
+
+  hydrateDeferredImages(listEl);
 }
 
 function renderFooter(config, count) {

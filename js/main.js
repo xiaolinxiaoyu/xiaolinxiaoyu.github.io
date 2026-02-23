@@ -155,11 +155,32 @@ function initCarousel() {
   const track = document.getElementById("carouselTrack");
   const dotsContainer = document.getElementById("carouselDots");
   if (!carousel || !track || !dotsContainer) return;
+  const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
+  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const connection = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const saveDataEnabled = Boolean(connection && connection.saveData);
+  const effectiveType = connection && typeof connection.effectiveType === "string" ? connection.effectiveType : "";
+  const lowBandwidth = /(^|[^0-9])2g|3g/i.test(effectiveType);
+  const autoScrollEnabled = !(isMobileViewport && (prefersReducedMotion || saveDataEnabled || lowBandwidth));
 
   dotsContainer.innerHTML = "";
 
   const originals = Array.from(track.querySelectorAll("img"));
   if (!originals.length) return;
+  originals.forEach((img, index) => {
+    img.loading = index === 0 ? "eager" : "lazy";
+    img.decoding = "async";
+    img.setAttribute("fetchpriority", index === 0 ? "high" : "low");
+  });
+
+  if (isMobileViewport && (saveDataEnabled || lowBandwidth)) {
+    originals.forEach((img) => {
+      const src = (img.getAttribute("src") || "").toLowerCase();
+      if (src.endsWith("/1_png.jpg")) {
+        img.setAttribute("src", "images/carousel/1.jpg");
+      }
+    });
+  }
 
   const cloneBatch = originals.map((img) => {
     const copy = img.cloneNode(true);
@@ -251,7 +272,7 @@ function initCarousel() {
     const delta = (ts - lastTs) / 1000;
     lastTs = ts;
 
-    if (!paused && oneBatchWidth > 0) {
+    if (autoScrollEnabled && !paused && oneBatchWidth > 0) {
       posX += speedPxPerSec * delta;
       normalizePosX();
       track.style.transform = `translate3d(${posX}px, 0, 0)`;
@@ -358,7 +379,9 @@ function initCarousel() {
   window.addEventListener("resize", onResize);
 
   measure();
-  rafId = requestAnimationFrame(tick);
+  if (autoScrollEnabled) {
+    rafId = requestAnimationFrame(tick);
+  }
 }
 
 function initMusic() {
@@ -377,6 +400,7 @@ function initMusic() {
   let playlist = [];
   let currentIndex = 0;
   let recentErrorCount = 0;
+  let playlistReady = false;
 
   function getDefaultPlaylist() {
     const source = music.querySelector("source");
@@ -403,6 +427,20 @@ function initMusic() {
       if (!playlist.length) throw new Error("playlist is empty");
     } catch (_) {
       playlist = getDefaultPlaylist();
+    }
+  }
+
+  async function ensurePlaylistReady() {
+    if (playlistReady) return;
+    await loadPlaylistData();
+    playlistReady = true;
+  }
+
+  async function ensureTrackPrepared() {
+    await ensurePlaylistReady();
+    if (!playlist.length) return;
+    if (!music.src) {
+      await loadTrack(0, false);
     }
   }
 
@@ -462,10 +500,46 @@ function initMusic() {
     syncPlayPauseIcon();
   }
 
-  musicToggle.addEventListener("click", () => {
+  function bindFirstInteractionAutoplay() {
+    const resumeOnGesture = async () => {
+      await ensureTrackPrepared();
+      if (!music.paused) return;
+      try {
+        await music.play();
+      } catch (_) {
+        return;
+      }
+      document.removeEventListener("pointerdown", resumeOnGesture);
+      document.removeEventListener("touchstart", resumeOnGesture);
+      document.removeEventListener("keydown", resumeOnGesture);
+    };
+
+    document.addEventListener("pointerdown", resumeOnGesture);
+    document.addEventListener("touchstart", resumeOnGesture, { passive: true });
+    document.addEventListener("keydown", resumeOnGesture);
+  }
+
+  async function tryAutoPlayOnInit() {
+    await ensureTrackPrepared();
+    if (!playlist.length) return;
+    try {
+      await music.play();
+      musicToggle.classList.add("playing");
+    } catch (_) {
+      bindFirstInteractionAutoplay();
+    } finally {
+      syncPlayPauseIcon();
+    }
+  }
+
+  musicToggle.addEventListener("click", async () => {
     const willOpen = panel.hidden;
     panel.hidden = !willOpen;
     musicToggle.setAttribute("aria-expanded", String(willOpen));
+    if (willOpen) {
+      await ensureTrackPrepared();
+      syncPlayPauseIcon();
+    }
   });
 
   document.addEventListener("click", (event) => {
@@ -482,6 +556,7 @@ function initMusic() {
   playPauseBtn.addEventListener("click", async () => {
     try {
       if (music.paused) {
+        await ensureTrackPrepared();
         await music.play();
         musicToggle.classList.add("playing");
       } else {
@@ -495,23 +570,25 @@ function initMusic() {
     }
   });
 
-  prevBtn.addEventListener("click", () => {
+  prevBtn.addEventListener("click", async () => {
+    await ensureTrackPrepared();
     if (!playlist.length) return;
     const autoPlay = !music.paused;
-    loadTrack(currentIndex - 1, autoPlay);
+    await loadTrack(currentIndex - 1, autoPlay);
     if (autoPlay) musicToggle.classList.add("playing");
   });
 
-  nextBtn.addEventListener("click", () => {
+  nextBtn.addEventListener("click", async () => {
+    await ensureTrackPrepared();
     if (!playlist.length) return;
     const autoPlay = !music.paused;
-    loadTrack(currentIndex + 1, autoPlay);
+    await loadTrack(currentIndex + 1, autoPlay);
     if (autoPlay) musicToggle.classList.add("playing");
   });
 
   music.addEventListener("ended", () => {
     if (!playlist.length) return;
-    loadTrack(currentIndex + 1, true);
+    void loadTrack(currentIndex + 1, true);
     musicToggle.classList.add("playing");
   });
 
@@ -533,46 +610,10 @@ function initMusic() {
       music.pause();
       return;
     }
-    loadTrack(currentIndex + 1, true);
+    void loadTrack(currentIndex + 1, true);
   });
-
-  loadPlaylistData().then(async () => {
-    await loadTrack(0, true);
-    if (music.paused) {
-      musicToggle.classList.remove("playing");
-      syncPlayPauseIcon();
-    }
-  });
-
-  const unlockEvents = ["pointerdown", "touchstart", "keydown"];
-  const tryForcePlayFirstTrack = async () => {
-    if (!playlist.length) return;
-    if (!music.src) {
-      await loadTrack(0, false);
-    }
-    if (music.paused) {
-      try {
-        await music.play();
-        musicToggle.classList.add("playing");
-        syncPlayPauseIcon();
-      } catch (_) {
-        musicToggle.classList.remove("playing");
-        syncPlayPauseIcon();
-      }
-    }
-  };
-
-  unlockEvents.forEach((eventName) => {
-    const handler = async () => {
-      await tryForcePlayFirstTrack();
-      if (!music.paused) {
-        unlockEvents.forEach((name) => {
-          document.removeEventListener(name, handler);
-        });
-      }
-    };
-    document.addEventListener(eventName, handler, { passive: true });
-  });
+  syncPlayPauseIcon();
+  void tryAutoPlayOnInit();
 }
 
 function updateThemeButtonLabel(isNightMode) {
@@ -724,10 +765,19 @@ function initTheme() {
 
 updateTogetherTime();
 updateCountdowns();
-initCarousel();
 initMusic();
 initTheme();
 setInterval(updateTogetherTime, 1000);
 setInterval(updateCountdowns, 60 * 1000);
+
+if (window.matchMedia("(min-width: 721px)").matches) {
+  if ("requestIdleCallback" in window) {
+    window.requestIdleCallback(() => initCarousel(), { timeout: 900 });
+  } else {
+    setTimeout(() => initCarousel(), 120);
+  }
+} else {
+  initCarousel();
+}
 
 

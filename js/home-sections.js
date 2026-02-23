@@ -41,7 +41,7 @@
     jsonPath: "data/books.json",
     title: "书籍墙",
     subtitle: "书里是故事，书外是我们(˶>ㅅ<˶)",
-    countTemplate: "📚小林和小鱼一起读完了 {count} 本书！",
+    countTemplate: "📚小林和小鱼一起读了 {count} 本书！",
     emptyMain: "还没有添加书籍",
     emptySub: "去记录下一本想读或读完的书吧~",
     errorMain: "书籍数据加载失败",
@@ -59,7 +59,7 @@
     jsonPath: "data/games.json",
     title: "游戏墙",
     subtitle: "有你陪着游戏才有了意义ꉂ^˶>ᴗ<˶^ฅ",
-    countTemplate: "🎮小林和小鱼一起玩过 {count} 款游戏！",
+    countTemplate: "🎮小林和小鱼一起玩了 {count} 款游戏！",
     emptyMain: "还没有添加游戏",
     emptySub: "快把最有记忆点的一作放进来吧~",
     errorMain: "游戏数据加载失败",
@@ -193,6 +193,57 @@ function clampPage(page, totalPages) {
   return Math.min(Math.max(Number(page) || 1, 1), Math.max(totalPages, 1));
 }
 
+let deferredImageObserver = null;
+
+function revealDeferredImage(img) {
+  if (!(img instanceof HTMLImageElement)) return;
+  const dataSrc = img.getAttribute("data-src");
+  if (!dataSrc) return;
+  img.setAttribute("src", dataSrc);
+  img.removeAttribute("data-src");
+  if (!img.hasAttribute("loading")) {
+    img.setAttribute("loading", "lazy");
+  }
+  if (!img.hasAttribute("decoding")) {
+    img.setAttribute("decoding", "async");
+  }
+}
+
+function queueDeferredImage(img) {
+  if (!(img instanceof HTMLImageElement) || !img.hasAttribute("data-src")) return;
+
+  if (!("IntersectionObserver" in window)) {
+    revealDeferredImage(img);
+    return;
+  }
+
+  if (!deferredImageObserver) {
+    deferredImageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const target = entry.target;
+        if (!(target instanceof HTMLImageElement)) return;
+        revealDeferredImage(target);
+        deferredImageObserver.unobserve(target);
+      });
+    }, {
+      root: null,
+      rootMargin: "180px 0px",
+      threshold: 0.01
+    });
+  }
+
+  deferredImageObserver.observe(img);
+}
+
+function hydrateDeferredImages(root) {
+  if (!(root instanceof Element) && root !== document) return;
+  const scope = root === document ? document : root;
+  scope.querySelectorAll("img[data-src]").forEach((img) => {
+    queueDeferredImage(img);
+  });
+}
+
 function createPager(currentPage, totalPages, onPageChange) {
   if (totalPages <= 1) return null;
   const pager = document.createElement("div");
@@ -285,6 +336,7 @@ function openOverlay(html) {
   });
 
   document.body.appendChild(overlay);
+  return overlay;
 }
 
 function openMediaPreview(item, config) {
@@ -318,24 +370,104 @@ function getRecordDetailText(item, config) {
   return "";
 }
 
+function getRecordImages(item) {
+  const images = [];
+  if (Array.isArray(item.imageUrls)) {
+    item.imageUrls.forEach((url) => {
+      if (typeof url === "string" && url.trim()) {
+        images.push(url.trim());
+      }
+    });
+  }
+  if (!images.length && typeof item.imageUrl === "string" && item.imageUrl.trim()) {
+    images.push(item.imageUrl.trim());
+  }
+  return images;
+}
+
 function openRecordDetail(item, config) {
   const detailText = getRecordDetailText(item, config) || "暂无详细记录";
   const statusBadge = config.primaryMeta === "status" ? getStatusBadge(item.status) : "";
-  const image = item.imageUrl
-    ? `<img class="home-detail-image" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "记录原图")}" loading="lazy">`
+  const images = getRecordImages(item);
+  const gallery = images.length
+    ? `
+      <div class="home-detail-gallery" data-gallery>
+        ${images.length > 1
+          ? `
+            <button type="button" class="home-detail-gallery-nav prev" aria-label="上一张">&#9664;</button>
+            <button type="button" class="home-detail-gallery-nav next" aria-label="下一张">&#9654;</button>
+          `
+          : ""}
+        <div class="home-detail-gallery-track">
+          ${images
+            .map((src, index) => `<img class="home-detail-image" data-src="${escapeHtml(src)}" alt="${escapeHtml(item.alt || item.title || "记录原图")} ${index + 1}" loading="lazy" decoding="async">`)
+            .join("")}
+        </div>
+        ${images.length > 1
+          ? `
+            <span class="home-detail-gallery-indicator">1 / ${images.length}</span>
+          `
+          : ""}
+      </div>
+    `
     : "";
 
-  openOverlay(`
+  const overlay = openOverlay(`
     <div class="home-detail-modal">
       <div class="home-detail-head">
         <h4>${escapeHtml(item.title || "Untitled")}</h4>
         ${statusBadge}
       </div>
-      ${image}
+      ${gallery}
       <p class="home-detail-content">${escapeHtml(detailText)}</p>
       <p class="home-detail-time">${escapeHtml(item.time || "未知时间")}</p>
     </div>
   `);
+  hydrateDeferredImages(overlay);
+
+  if (!overlay || images.length <= 1) return;
+  const track = overlay.querySelector(".home-detail-gallery-track");
+  const prevBtn = overlay.querySelector(".home-detail-gallery-nav.prev");
+  const nextBtn = overlay.querySelector(".home-detail-gallery-nav.next");
+  const indicator = overlay.querySelector(".home-detail-gallery-indicator");
+  if (!(track instanceof HTMLElement) || !(indicator instanceof HTMLElement)) return;
+
+  const updateGalleryState = () => {
+    const width = track.clientWidth || 1;
+    const maxIndex = images.length - 1;
+    const current = Math.max(0, Math.min(maxIndex, Math.round(track.scrollLeft / width)));
+    indicator.innerText = `${current + 1} / ${images.length}`;
+  };
+
+  track.addEventListener("scroll", () => {
+    updateGalleryState();
+  }, { passive: true });
+
+  const scrollToIndex = (index) => {
+    const width = track.clientWidth || 0;
+    track.scrollTo({
+      left: Math.max(0, index) * width,
+      behavior: "smooth"
+    });
+  };
+
+  if (prevBtn instanceof HTMLButtonElement) {
+    prevBtn.addEventListener("click", () => {
+      const width = track.clientWidth || 1;
+      const current = Math.round(track.scrollLeft / width);
+      scrollToIndex(current - 1);
+    });
+  }
+
+  if (nextBtn instanceof HTMLButtonElement) {
+    nextBtn.addEventListener("click", () => {
+      const width = track.clientWidth || 1;
+      const current = Math.round(track.scrollLeft / width);
+      scrollToIndex(current + 1);
+    });
+  }
+
+  updateGalleryState();
 }
 
 function renderEmpty(contentEl, config, isError) {
@@ -370,7 +502,7 @@ function renderMedia(contentEl, items, config, options = {}) {
     card.className = "home-media-card";
     const meta = buildMetaLine(item);
     const cover = item.imageUrl
-      ? `<img class="home-media-cover" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "media")}" loading="lazy">`
+      ? `<img class="home-media-cover" data-src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "media")}" loading="lazy" decoding="async">`
       : `<div class="home-media-cover home-media-cover-placeholder">${escapeHtml(config.fallbackIcon || "📝")}</div>`;
 
     card.innerHTML = `
@@ -387,6 +519,7 @@ function renderMedia(contentEl, items, config, options = {}) {
 
   contentEl.innerHTML = "";
   contentEl.appendChild(grid);
+  hydrateDeferredImages(contentEl);
 
   const pager = createPager(currentPage, totalPages, options.onPageChange);
   if (pager) {
@@ -420,13 +553,15 @@ function renderRecords(contentEl, items, config, options = {}) {
 
   visibleItems.forEach((item) => {
     const row = document.createElement("li");
-    const hasThumb = Boolean(config.showThumb && item.imageUrl);
+    const recordImages = getRecordImages(item);
+    const coverImage = recordImages[0] || "";
+    const hasThumb = Boolean(config.showThumb && coverImage);
     const detailText = getRecordDetailText(item, config);
-    const canOpenDetail = Boolean(detailText || item.imageUrl);
+    const canOpenDetail = Boolean(detailText || coverImage);
     row.className = `home-record-item${hasThumb ? " has-thumb" : ""}${canOpenDetail ? " is-clickable" : ""}`;
 
     const thumb = hasThumb
-      ? `<img class="home-record-thumb" src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "记录图片")}" loading="lazy">`
+      ? `<img class="home-record-thumb" data-src="${escapeHtml(coverImage)}" alt="${escapeHtml(item.alt || item.title || "记录图片")}" loading="lazy" decoding="async">`
       : "";
 
     const primary = formatRecordMeta(item, config.primaryMeta);
@@ -459,6 +594,7 @@ function renderRecords(contentEl, items, config, options = {}) {
 
   contentEl.innerHTML = "";
   contentEl.appendChild(list);
+  hydrateDeferredImages(contentEl);
 
   const pager = createPager(currentPage, totalPages, options.onPageChange);
   if (pager) {
@@ -581,9 +717,10 @@ document.addEventListener("DOMContentLoaded", () => {
       tab.classList.toggle("is-active", tab.dataset.section === key);
     });
 
+    const initialCount = key === "movies" ? 0 : getDisplayCount(config, 0);
     titleEl.innerText = config.title;
     subtitleEl.innerText = config.subtitle;
-    countEl.innerText = fillTemplate(config.countTemplate, getDisplayCount(config, 0));
+    countEl.innerText = fillTemplate(config.countTemplate, initialCount);
     footerEl.innerText = "";
     contentEl.innerHTML = '<div class="home-empty"><p>加载中...</p></div>';
 
@@ -638,7 +775,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } catch (error) {
       if (token !== activeToken) return;
       console.error(error);
-      countEl.innerText = fillTemplate(config.countTemplate, getDisplayCount(config, 0));
+      countEl.innerText = fillTemplate(config.countTemplate, initialCount);
       footerEl.innerText = "";
       renderEmpty(contentEl, config, true);
       syncCollapseButtonPlacement(config);

@@ -35,6 +35,52 @@ function setCount(config, count) {
   countEl.innerText = config.countTemplate.replace("{count}", String(count));
 }
 
+let deferredImageObserver = null;
+
+function revealDeferredImage(img) {
+  if (!(img instanceof HTMLImageElement)) return;
+  const dataSrc = img.getAttribute("data-src");
+  if (!dataSrc) return;
+  img.setAttribute("src", dataSrc);
+  img.removeAttribute("data-src");
+  if (!img.hasAttribute("loading")) {
+    img.setAttribute("loading", "lazy");
+  }
+  if (!img.hasAttribute("decoding")) {
+    img.setAttribute("decoding", "async");
+  }
+}
+
+function hydrateDeferredImages(root) {
+  if (!(root instanceof Element) && root !== document) return;
+  const scope = root === document ? document : root;
+  const images = scope.querySelectorAll("img[data-src]");
+  if (!images.length) return;
+
+  if (!("IntersectionObserver" in window)) {
+    images.forEach((img) => revealDeferredImage(img));
+    return;
+  }
+
+  if (!deferredImageObserver) {
+    deferredImageObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        const target = entry.target;
+        if (!(target instanceof HTMLImageElement)) return;
+        revealDeferredImage(target);
+        deferredImageObserver.unobserve(target);
+      });
+    }, {
+      root: null,
+      rootMargin: "180px 0px",
+      threshold: 0.01
+    });
+  }
+
+  images.forEach((img) => deferredImageObserver.observe(img));
+}
+
 function renderEmpty(gallery, config) {
   gallery.innerHTML = `
     <div class="empty-state">
@@ -55,7 +101,7 @@ function renderError(gallery, config) {
 
 function buildCover(item, fallbackIcon) {
   if (item.imageUrl) {
-    return `<img class="media-cover" src="${item.imageUrl}" alt="${item.alt || item.title || "media"}" loading="lazy">`;
+    return `<img class="media-cover" data-src="${item.imageUrl}" alt="${item.alt || item.title || "media"}" loading="lazy" decoding="async">`;
   }
   return `<div class="media-cover media-cover-placeholder">${item.icon || fallbackIcon}</div>`;
 }
@@ -91,6 +137,7 @@ function openPreview(item, config) {
   });
 
   document.body.appendChild(overlay);
+  hydrateDeferredImages(overlay);
 }
 
 function resolveMeta(item) {
@@ -126,6 +173,8 @@ function renderItems(gallery, items, config) {
     card.addEventListener("click", () => openPreview(item, config));
     gallery.appendChild(card);
   });
+
+  hydrateDeferredImages(gallery);
 }
 
 function renderFooter(config, count) {

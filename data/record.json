@@ -1,23 +1,33 @@
 [
   {
     "title": "🎆跨年夜！",
-    "imageUrl": "images/record/2.jpg",
+    "imageUrls": [
+      "images/record/2.jpg",
+      "images/record/IMG_6886.JPG",
+      "images/record/IMG_2358.JPG"
+    ],
     "time": "2026-01-01",
     "note": "一起跨年啦！！",
     "alt": "跨年",
-    "detail": "一起跨年啦！！"
+    "detail": "一起跨年啦！！！\n一起看了烟花，一起看了电影，一起吃了炸串火鸡面大渔，好幸福！！！！！"
   },
   {
     "title": "🎂给小鱼过生日！",
-    "imageUrl": "images/record/1.jpg",
+    "imageUrls": [
+      "images/record/1.jpg",
+      "images/record/IMG_2274.JPG",
+      "images/record/IMG_6853.jpg"
+    ],
     "time": "2025-12-27",
     "note": "小林给小鱼过在一起后的第一个生日~",
     "alt": "生日",
-    "detail": "小林给小鱼过在一起后的第一个生日~"
+    "detail": "小林给小鱼过在一起后的第一个生日~\n去做了草莓小蛋糕！小林得了MVP，小鱼是最佳辅助！\n晚上吃了漂亮饭，不贵还挺好吃！\n第二天去了水族馆，一起去小林小时候去过的地方玩！\n是小鱼目前过过的最好的生日哦~特别开心！！！"
   },
   {
     "title": "在一起啦！！！",
-    "imageUrl": "images/record/0.jpg",
+    "imageUrls": [
+      "images/record/0.jpg"
+    ],
     "time": "2025-11-25",
     "note": "小林和小鱼在一起了耶！！！",
     "alt": "在一起",
