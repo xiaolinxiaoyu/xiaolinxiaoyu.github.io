@@ -1869,8 +1869,8 @@ body.theme-night .home-page-btn {
   }
 
   body:not(.theme-night) .day-heart::before {
-    width: calc(var(--heart-size, 15px) * 0.72);
-    height: calc(var(--heart-size, 15px) * 0.72);
+    width: calc(var(--heart-size, 15px) * 1.1);
+    height: calc(var(--heart-size, 15px) * 1.1);
     filter: drop-shadow(0 0 3px rgba(249, 215, 232, 0.2));
   }
 
