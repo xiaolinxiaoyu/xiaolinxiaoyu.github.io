@@ -1570,6 +1570,7 @@ body.theme-night .home-page-btn {
 }
 
 .home-detail-modal {
+  position: relative;
   width: min(560px, 95vw);
   background: #fff;
   border-radius: 14px;

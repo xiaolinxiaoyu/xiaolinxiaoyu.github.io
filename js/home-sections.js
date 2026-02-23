@@ -414,6 +414,7 @@ function openRecordDetail(item, config) {
 
   const overlay = openOverlay(`
     <div class="home-detail-modal">
+      <button class="home-overlay-close" type="button" aria-label="关闭">&times;</button>
       <div class="home-detail-head">
         <h4>${escapeHtml(item.title || "Untitled")}</h4>
         ${statusBadge}
