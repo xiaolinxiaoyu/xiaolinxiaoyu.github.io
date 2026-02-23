@@ -417,11 +417,13 @@ function openRecordDetail(item, config) {
       <button class="home-overlay-close" type="button" aria-label="关闭">&times;</button>
       <div class="home-detail-head">
         <h4>${escapeHtml(item.title || "Untitled")}</h4>
-        ${statusBadge}
       </div>
       ${gallery}
       <p class="home-detail-content">${escapeHtml(detailText)}</p>
-      <p class="home-detail-time">${escapeHtml(item.time || "未知时间")}</p>
+      <div class="home-detail-foot">
+        <p class="home-detail-time">${escapeHtml(item.time || "未知时间")}</p>
+        ${statusBadge}
+      </div>
     </div>
   `);
   hydrateDeferredImages(overlay);
