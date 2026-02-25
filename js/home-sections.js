@@ -282,9 +282,15 @@ function scrollToFirstRenderedItem(contentEl) {
   const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || (navigator.maxTouchPoints || 0) > 0;
   if (!isMobileViewport || !isTouchDevice) return;
   requestAnimationFrame(() => {
-    const sectionViewer = contentEl.closest(".home-section-viewer");
-    const target = sectionViewer instanceof HTMLElement ? sectionViewer : contentEl;
-    target.scrollIntoView({ behavior: "smooth", block: "start" });
+    requestAnimationFrame(() => {
+      const firstRecord = contentEl.querySelector(".home-record-item");
+      const firstMediaCard = contentEl.querySelector(".home-media-card");
+      const sectionViewer = contentEl.closest(".home-section-viewer");
+      const target = firstRecord || firstMediaCard || (sectionViewer instanceof HTMLElement ? sectionViewer : contentEl);
+      if (target instanceof HTMLElement) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    });
   });
 }
 
@@ -757,6 +763,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
         renderMediaPage(pageState.get(key) || 1);
+        scrollToFirstRenderedItem(contentEl);
       } else {
         activeMediaLayoutSize = 0;
         const renderRecordsPage = (page, meta = {}) => {
@@ -772,6 +779,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
         renderRecordsPage(pageState.get(key) || 1);
+        scrollToFirstRenderedItem(contentEl);
       }
 
       requestAnimationFrame(() => {

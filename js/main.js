@@ -395,7 +395,7 @@ function initMusic() {
 
   if (!music || !musicToggle || !panel || !trackName || !prevBtn || !playPauseBtn || !nextBtn) return;
 
-  music.volume = 0.2;
+  music.volume = 0.1;
   music.loop = false;
   let playlist = [];
   let currentIndex = 0;
