@@ -294,6 +294,17 @@ function scrollToFirstRenderedItem(contentEl) {
   });
 }
 
+function scrollToSectionViewerTop(contentEl) {
+  const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
+  const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || (navigator.maxTouchPoints || 0) > 0;
+  if (!isMobileViewport || !isTouchDevice) return;
+  requestAnimationFrame(() => {
+    const sectionViewer = contentEl.closest(".home-section-viewer");
+    const target = sectionViewer instanceof HTMLElement ? sectionViewer : contentEl;
+    target.scrollIntoView({ behavior: "smooth", block: "start" });
+  });
+}
+
 function stabilizeDesktopPageHeight(contentEl, sectionKey, heightState) {
   const isMobileViewport = window.matchMedia("(max-width: 720px)").matches;
   const isTouchDevice = window.matchMedia("(pointer: coarse)").matches || (navigator.maxTouchPoints || 0) > 0;
@@ -763,7 +774,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
         renderMediaPage(pageState.get(key) || 1);
-        scrollToFirstRenderedItem(contentEl);
+        scrollToSectionViewerTop(contentEl);
       } else {
         activeMediaLayoutSize = 0;
         const renderRecordsPage = (page, meta = {}) => {
@@ -779,7 +790,7 @@ document.addEventListener("DOMContentLoaded", () => {
           }
         };
         renderRecordsPage(pageState.get(key) || 1);
-        scrollToFirstRenderedItem(contentEl);
+        scrollToSectionViewerTop(contentEl);
       }
 
       requestAnimationFrame(() => {
