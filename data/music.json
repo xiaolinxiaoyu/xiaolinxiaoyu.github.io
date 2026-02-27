@@ -5,29 +5,19 @@
     "artist": "NewJeans"
   },
   {
-    "src": "music/afterlike.mp3",
-    "name": "After Like",
-    "artist": "IVE"
-  },
-  {
     "src": "music/thunder.mp3",
     "name": "カミナリ",
     "artist": "I Don't Like Mondays."
   },
   {
-    "src": "music/Magnetic.mp3",
-    "name": "Magnetic",
-    "artist": "ILLIT"
+    "src": "music/afterlike.mp3",
+    "name": "After Like",
+    "artist": "IVE"
   },
   {
     "src": "music/ofther.mp3",
     "name": "Off the Record",
     "artist": "IVE"
-  },
-  {
-    "src": "music/Lemonade.mp3",
-    "name": "Lemonade",
-    "artist": "I Don't Like Mondays."
   }
 ]
 
