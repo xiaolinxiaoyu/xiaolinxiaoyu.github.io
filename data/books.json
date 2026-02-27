@@ -1,5 +1,29 @@
 [
   {
+    "title":  "玩家一号",
+    "imageUrl":  "images/books/thwj.jpg",
+    "time":  "2026-02-28",
+    "author": "恩斯特·克莱恩",
+    "recommender": "小鱼",
+    "alt":  "玩家一号"
+  },
+  {
+    "title":  "国境以南 太阳以西",
+    "imageUrl":  "images/books/gjyn.jpg",
+    "time":  "2026-02-28",
+    "author": "村上春树",
+    "recommender": "小鱼",
+    "alt":  "国境以南 太阳以西"
+  },
+  {
+    "title":  "安珀志",
+    "imageUrl":  "images/books/abz.jpg",
+    "time":  "2026-02-28",
+    "author": "罗杰·泽拉兹尼",
+    "recommender": "小鱼",
+    "alt":  "安珀志"
+  },
+  {
     "title":  "追风筝的人",
     "imageUrl":  "images/books/IMG_6440.JPG",
     "time":  "2025-10-29",
