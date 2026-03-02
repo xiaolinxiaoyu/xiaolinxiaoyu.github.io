@@ -37,8 +37,35 @@ function setTextById(id, text) {
 }
 
 
-function formatCountdownDays(remainingDays) {
-  return remainingDays === 0 ? "就在今天！" : `还有 ${remainingDays} 天`;
+function isSameCalendarDate(dateA, dateB) {
+  return (
+    dateA.getFullYear() === dateB.getFullYear() &&
+    dateA.getMonth() === dateB.getMonth() &&
+    dateA.getDate() === dateB.getDate()
+  );
+}
+
+function formatRemainingTime(remainingMs) {
+  const totalSeconds = Math.floor(remainingMs / 1000);
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  return `${String(hours).padStart(2, "0")}小时${String(minutes).padStart(2, "0")}分${String(seconds).padStart(2, "0")}秒`;
+}
+
+function formatCountdownToTarget(targetDate, now) {
+  const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  if (isSameCalendarDate(todayDate, targetDate)) {
+    return "就在今天！";
+  }
+
+  const remainingMs = targetDate - now;
+  if (remainingMs > 0 && remainingMs < MS_PER_DAY) {
+    return formatRemainingTime(remainingMs);
+  }
+
+  const remainingDays = Math.max(0, Math.round((targetDate - todayDate) / MS_PER_DAY));
+  return `还有 ${remainingDays} 天`;
 }
 function updateTogetherTime() {
   const now = new Date();
@@ -67,7 +94,8 @@ function getNextBirthdayTarget(todayDate, month, day) {
 }
 
 function updateCountdowns() {
-  const todayDate = getTodayDate();
+  const now = new Date();
+  const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const togetherDays = getTogetherDays(todayDate);
 
   const nextMilestone = (Math.floor(togetherDays / 100) + 1) * 100;
@@ -76,50 +104,26 @@ function updateCountdowns() {
     startDate.getMonth(),
     startDate.getDate() + nextMilestone
   );
-  const milestoneRemaining = Math.max(
-    0,
-    Math.round((milestoneTarget - todayDate) / MS_PER_DAY)
-  );
 
   const anniversaryTarget = getNextBirthdayTarget(todayDate, 11, 25);
-  const anniversaryRemaining = Math.max(
-    0,
-    Math.round((anniversaryTarget - todayDate) / MS_PER_DAY)
-  );
 
   const linBirthdayTarget = getNextBirthdayTarget(todayDate, 5, 18);
-  const linBirthdayRemaining = Math.max(
-    0,
-    Math.round((linBirthdayTarget - todayDate) / MS_PER_DAY)
-  );
 
   const yuBirthdayTarget = getNextBirthdayTarget(todayDate, 1, 4);
-  const yuBirthdayRemaining = Math.max(
-    0,
-    Math.round((yuBirthdayTarget - todayDate) / MS_PER_DAY)
-  );
   const valentineTarget = getNextBirthdayTarget(todayDate, 2, 14);
-  const valentineRemaining = Math.max(
-    0,
-    Math.round((valentineTarget - todayDate) / MS_PER_DAY)
-  );
   const mayTwentyTarget = getNextBirthdayTarget(todayDate, 5, 20);
-  const mayTwentyRemaining = Math.max(
-    0,
-    Math.round((mayTwentyTarget - todayDate) / MS_PER_DAY)
-  );
 
-  setTextById("countdown_valentine_days", formatCountdownDays(valentineRemaining));
+  setTextById("countdown_valentine_days", formatCountdownToTarget(valentineTarget, now));
   setTextById("countdown_valentine_target", `目标日期：${formatDate(valentineTarget)}`);
-  setTextById("countdown_520_days", formatCountdownDays(mayTwentyRemaining));
+  setTextById("countdown_520_days", formatCountdownToTarget(mayTwentyTarget, now));
   setTextById("countdown_520_target", `目标日期：${formatDate(mayTwentyTarget)}`);
-  setTextById("countdown_anniversary_days", formatCountdownDays(anniversaryRemaining));
+  setTextById("countdown_anniversary_days", formatCountdownToTarget(anniversaryTarget, now));
   setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
-  setTextById("countdown_milestone_days", formatCountdownDays(milestoneRemaining));
+  setTextById("countdown_milestone_days", formatCountdownToTarget(milestoneTarget, now));
   setTextById("countdown_milestone_target", `目标日期：${formatDate(milestoneTarget)}`);
-  setTextById("countdown_lin_days", formatCountdownDays(linBirthdayRemaining));
+  setTextById("countdown_lin_days", formatCountdownToTarget(linBirthdayTarget, now));
   setTextById("countdown_lin_target", `目标日期：${formatDate(linBirthdayTarget)}`);
-  setTextById("countdown_yu_days", formatCountdownDays(yuBirthdayRemaining));
+  setTextById("countdown_yu_days", formatCountdownToTarget(yuBirthdayTarget, now));
   setTextById("countdown_yu_target", `目标日期：${formatDate(yuBirthdayTarget)}`);
 }
 
@@ -768,7 +772,7 @@ updateCountdowns();
 initMusic();
 initTheme();
 setInterval(updateTogetherTime, 1000);
-setInterval(updateCountdowns, 60 * 1000);
+setInterval(updateCountdowns, 1000);
 
 if (window.matchMedia("(min-width: 721px)").matches) {
   if ("requestIdleCallback" in window) {
@@ -779,5 +783,3 @@ if (window.matchMedia("(min-width: 721px)").matches) {
 } else {
   initCarousel();
 }
-
-
