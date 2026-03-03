@@ -1,9 +1,15 @@
 [
   {
-    "title": "唐人街探案",
+    "title": "唐人街探案第二季",
+    "imageUrl": "images/movies/trj2.jpg",
+    "time": "2026-03-03",
+    "alt": "唐人街探案2"
+  },
+  {
+    "title": "唐人街探案第一季",
     "imageUrl": "images/movies/trj.jpg",
     "time": "2026-02-28",
-    "alt": "唐人街探案"
+    "alt": "唐人街探案1"
   },
   {
     "title": "裸熊",
