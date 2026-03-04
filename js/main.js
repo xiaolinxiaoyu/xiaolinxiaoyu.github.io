@@ -103,13 +103,63 @@ function startMilestoneFireworks(overlay) {
   let burstTimerId = null;
   let burstCount = 0;
   const maxBursts = 7;
+  const burstPositionHistory = [];
+  const maxPositionHistory = 4;
+
+  const getRandomBurstPosition = () => {
+    const minLeft = 10;
+    const maxLeft = 90;
+    const minTop = 8;
+    const maxTop = 68;
+    const minDistance = 16;
+    let best = null;
+    let bestDistance = -1;
+
+    for (let attempt = 0; attempt < 9; attempt += 1) {
+      const candidate = {
+        left: minLeft + Math.random() * (maxLeft - minLeft),
+        top: minTop + Math.random() * (maxTop - minTop)
+      };
+
+      if (!burstPositionHistory.length) {
+        return candidate;
+      }
+
+      let nearestDistance = Infinity;
+      for (let i = 0; i < burstPositionHistory.length; i += 1) {
+        const past = burstPositionHistory[i];
+        const distance = Math.hypot(candidate.left - past.left, candidate.top - past.top);
+        nearestDistance = Math.min(nearestDistance, distance);
+      }
+
+      if (nearestDistance >= minDistance) {
+        return candidate;
+      }
+
+      if (nearestDistance > bestDistance) {
+        best = candidate;
+        bestDistance = nearestDistance;
+      }
+    }
+
+    return best || {
+      left: minLeft + Math.random() * (maxLeft - minLeft),
+      top: minTop + Math.random() * (maxTop - minTop)
+    };
+  };
 
   const createBurst = () => {
     const burst = document.createElement("div");
     burst.className = "milestone-firework-burst";
-    burst.style.left = `${18 + Math.random() * 64}%`;
-    burst.style.top = `${12 + Math.random() * 44}%`;
+    const position = getRandomBurstPosition();
+    burst.style.left = `${position.left}%`;
+    burst.style.top = `${position.top}%`;
     layer.appendChild(burst);
+
+    burstPositionHistory.push(position);
+    if (burstPositionHistory.length > maxPositionHistory) {
+      burstPositionHistory.shift();
+    }
 
     const particleCount = 14;
     for (let i = 0; i < particleCount; i += 1) {
