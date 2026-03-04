@@ -167,7 +167,7 @@ function showMilestoneCelebrationIfNeeded() {
   overlay.innerHTML = `
     <div class="milestone-celebration-card" role="dialog" aria-modal="true" aria-label="整百天庆祝">
       <h3>🎉🎉${milestoneDay}天快乐！！</h3>
-      <p>今天是小林和小鱼在一起的第${milestoneDay}天！！<br>请继续幸福下去吧~期待我们的第${milestoneDay + 100}天！！</p>
+      <p>今天是小林和小鱼在一起的第${milestoneDay}天！！<br>请继续幸福下去吧~期待我们的第${milestoneDay + 100}天！！<br>宝宝上班辛苦啦！晚上请你喝奶茶！想你🫶</p>
       <button type="button" class="milestone-celebration-close">好耶！收下这份喜悦~Happy~</button>
     </div>
   `;
