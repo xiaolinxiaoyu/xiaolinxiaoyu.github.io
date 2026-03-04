@@ -808,6 +808,84 @@ h1 {
   cursor: pointer;
 }
 
+.milestone-celebration-overlay {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+  z-index: 10000;
+  background: rgba(20, 7, 19, 0.58);
+  backdrop-filter: blur(4px);
+}
+
+.milestone-celebration-card {
+  width: min(450px, 92vw);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 170, 214, 0.64);
+  background: linear-gradient(165deg, #fffafc 0%, #ffeef7 100%);
+  box-shadow: 0 20px 44px rgba(186, 69, 130, 0.28);
+  padding: 24px 20px 22px;
+  color: #7e2f5c;
+  text-align: center;
+  animation: milestonePopIn 0.38s ease both;
+}
+
+body.theme-night .milestone-celebration-card {
+  background: linear-gradient(165deg, #2f2343 0%, #3f2a58 100%);
+  border-color: rgba(216, 167, 255, 0.42);
+  color: #f8dbf5;
+  box-shadow: 0 24px 46px rgba(0, 0, 0, 0.42);
+}
+
+.milestone-celebration-badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 6px 12px;
+  margin-bottom: 10px;
+  font-size: 0.76rem;
+  letter-spacing: 0.08em;
+  color: #b63776;
+  background: rgba(255, 124, 191, 0.18);
+}
+
+body.theme-night .milestone-celebration-badge {
+  color: #ffd2f0;
+  background: rgba(255, 178, 232, 0.16);
+}
+
+.milestone-celebration-card h3 {
+  font-size: 1.75rem;
+  margin-bottom: 10px;
+  color: #d13d86;
+}
+
+body.theme-night .milestone-celebration-card h3 {
+  color: #ffc3e8;
+}
+
+.milestone-celebration-card p {
+  font-size: 1rem;
+  line-height: 1.72;
+}
+
+.milestone-celebration-close {
+  margin-top: 14px;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 16px;
+  font-size: 0.95rem;
+  cursor: pointer;
+  color: #fff;
+  background: linear-gradient(135deg, #ff6eb5 0%, #ef4d9c 100%);
+  box-shadow: 0 8px 16px rgba(239, 77, 156, 0.28);
+}
+
+.milestone-celebration-close:hover {
+  filter: brightness(1.03);
+}
+
 .corner-tools {
   position: fixed;
   right: 12px;
@@ -2083,5 +2161,17 @@ body.theme-night .home-page-btn {
   90%,
   100% {
     transform: translateX(0);
+  }
+}
+
+@keyframes milestonePopIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
   }
 }

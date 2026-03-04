@@ -50,7 +50,7 @@ function formatRemainingTime(remainingMs) {
   const hours = Math.floor(totalSeconds / 3600);
   const minutes = Math.floor((totalSeconds % 3600) / 60);
   const seconds = totalSeconds % 60;
-  return `${String(hours).padStart(2, "0")}小时${String(minutes).padStart(2, "0")}分${String(seconds).padStart(2, "0")}秒`;
+  return `${hours}小时${minutes}分${seconds}秒`;
 }
 
 function formatCountdownToTarget(targetDate, now) {
@@ -67,6 +67,73 @@ function formatCountdownToTarget(targetDate, now) {
   const remainingDays = Math.max(0, Math.round((targetDate - todayDate) / MS_PER_DAY));
   return `还有 ${remainingDays} 天`;
 }
+
+function getMilestoneInfo(todayDate) {
+  const togetherDays = getTogetherDays(todayDate);
+  const normalizedDays = Math.max(0, togetherDays);
+  const isMilestoneToday = normalizedDays > 0 && normalizedDays % 100 === 0;
+  const milestoneDay = isMilestoneToday
+    ? normalizedDays
+    : (Math.floor(normalizedDays / 100) + 1) * 100;
+  const milestoneTarget = new Date(
+    startDate.getFullYear(),
+    startDate.getMonth(),
+    startDate.getDate() + milestoneDay
+  );
+
+  return {
+    milestoneDay,
+    milestoneTarget,
+    isMilestoneToday
+  };
+}
+
+function showMilestoneCelebrationIfNeeded() {
+  const now = new Date();
+  const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const { milestoneDay, isMilestoneToday } = getMilestoneInfo(todayDate);
+
+  if (!isMilestoneToday) return;
+
+  const overlay = document.createElement("div");
+  overlay.className = "milestone-celebration-overlay";
+  overlay.innerHTML = `
+    <div class="milestone-celebration-card" role="dialog" aria-modal="true" aria-label="整百天庆祝">
+      <h3>🎉🎉${milestoneDay}天快乐！</h3>
+      <p>今天是小林和小鱼在一起的第${milestoneDay}天！！！<br>下一个百天请继续幸福下去吧~期待我们的第${milestoneDay + 100}天！</p>
+      <button type="button" class="milestone-celebration-close">好耶！收下这份喜悦~Happy~</button>
+    </div>
+  `;
+
+  const onKeyDown = (event) => {
+    if (event.key === "Escape") {
+      close();
+    }
+  };
+
+  const close = () => {
+    document.removeEventListener("keydown", onKeyDown);
+    if (overlay.parentNode) {
+      document.body.removeChild(overlay);
+    }
+  };
+
+  overlay.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    if (
+      target.classList.contains("milestone-celebration-overlay") ||
+      target.classList.contains("milestone-celebration-close")
+    ) {
+      close();
+    }
+  });
+
+  document.addEventListener("keydown", onKeyDown);
+
+  document.body.appendChild(overlay);
+}
+
 function updateTogetherTime() {
   const now = new Date();
   const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -96,14 +163,7 @@ function getNextBirthdayTarget(todayDate, month, day) {
 function updateCountdowns() {
   const now = new Date();
   const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-  const togetherDays = getTogetherDays(todayDate);
-
-  const nextMilestone = (Math.floor(togetherDays / 100) + 1) * 100;
-  const milestoneTarget = new Date(
-    startDate.getFullYear(),
-    startDate.getMonth(),
-    startDate.getDate() + nextMilestone
-  );
+  const { milestoneDay, milestoneTarget } = getMilestoneInfo(todayDate);
 
   const anniversaryTarget = getNextBirthdayTarget(todayDate, 11, 25);
 
@@ -119,7 +179,10 @@ function updateCountdowns() {
   setTextById("countdown_520_target", `目标日期：${formatDate(mayTwentyTarget)}`);
   setTextById("countdown_anniversary_days", formatCountdownToTarget(anniversaryTarget, now));
   setTextById("countdown_anniversary_target", `目标日期：${formatDate(anniversaryTarget)}`);
-  setTextById("countdown_milestone_days", formatCountdownToTarget(milestoneTarget, now));
+  const milestoneCountdownText = isSameCalendarDate(todayDate, milestoneTarget)
+    ? `${milestoneDay}天就在今天！`
+    : formatCountdownToTarget(milestoneTarget, now);
+  setTextById("countdown_milestone_days", milestoneCountdownText);
   setTextById("countdown_milestone_target", `目标日期：${formatDate(milestoneTarget)}`);
   setTextById("countdown_lin_days", formatCountdownToTarget(linBirthdayTarget, now));
   setTextById("countdown_lin_target", `目标日期：${formatDate(linBirthdayTarget)}`);
@@ -133,7 +196,7 @@ function openImagePreview(src, alt) {
   overlay.innerHTML = `
     <div class="preview-box">
       <img src="${src}" alt="${alt}">
-      <span class="close-btn" aria-label="鍏抽棴棰勮">&times;</span>
+      <span class="close-btn" aria-label="关闭预览">&times;</span>
     </div>
   `;
 
@@ -769,6 +832,7 @@ function initTheme() {
 
 updateTogetherTime();
 updateCountdowns();
+showMilestoneCelebrationIfNeeded();
 initMusic();
 initTheme();
 setInterval(updateTogetherTime, 1000);
