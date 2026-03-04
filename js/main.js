@@ -88,6 +88,73 @@ function getMilestoneInfo(todayDate) {
   };
 }
 
+function startMilestoneFireworks(overlay) {
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    return () => {};
+  }
+
+  const layer = document.createElement("div");
+  layer.className = "milestone-fireworks-layer";
+  layer.setAttribute("aria-hidden", "true");
+  overlay.appendChild(layer);
+
+  const colors = ["#ffd166", "#ff7eb6", "#7bdff2", "#c9ff7b", "#ff9f68", "#d7a6ff"];
+  const timeoutIds = [];
+  let burstTimerId = null;
+  let burstCount = 0;
+  const maxBursts = 7;
+
+  const createBurst = () => {
+    const burst = document.createElement("div");
+    burst.className = "milestone-firework-burst";
+    burst.style.left = `${18 + Math.random() * 64}%`;
+    burst.style.top = `${12 + Math.random() * 44}%`;
+    layer.appendChild(burst);
+
+    const particleCount = 14;
+    for (let i = 0; i < particleCount; i += 1) {
+      const particle = document.createElement("span");
+      particle.className = "milestone-firework-particle";
+      const angle = (Math.PI * 2 * i) / particleCount + (Math.random() - 0.5) * 0.22;
+      const distance = 48 + Math.random() * 62;
+      const dx = Math.cos(angle) * distance;
+      const dy = Math.sin(angle) * distance;
+
+      particle.style.setProperty("--dx", `${dx}px`);
+      particle.style.setProperty("--dy", `${dy}px`);
+      particle.style.setProperty("--firework-color", colors[Math.floor(Math.random() * colors.length)]);
+      particle.style.setProperty("--particle-delay", `${Math.random() * 0.06}s`);
+      burst.appendChild(particle);
+    }
+
+    const removeId = window.setTimeout(() => {
+      if (burst.parentNode) burst.parentNode.removeChild(burst);
+    }, 1050);
+    timeoutIds.push(removeId);
+  };
+
+  createBurst();
+  burstTimerId = window.setInterval(() => {
+    burstCount += 1;
+    createBurst();
+    if (burstCount >= maxBursts) {
+      window.clearInterval(burstTimerId);
+      burstTimerId = null;
+    }
+  }, 520);
+
+  return () => {
+    if (burstTimerId) {
+      window.clearInterval(burstTimerId);
+      burstTimerId = null;
+    }
+    timeoutIds.forEach((id) => window.clearTimeout(id));
+    if (layer.parentNode) {
+      layer.parentNode.removeChild(layer);
+    }
+  };
+}
+
 function showMilestoneCelebrationIfNeeded() {
   const now = new Date();
   const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -111,8 +178,11 @@ function showMilestoneCelebrationIfNeeded() {
     }
   };
 
+  const stopFireworks = startMilestoneFireworks(overlay);
+
   const close = () => {
     document.removeEventListener("keydown", onKeyDown);
+    stopFireworks();
     if (overlay.parentNode) {
       document.body.removeChild(overlay);
     }
