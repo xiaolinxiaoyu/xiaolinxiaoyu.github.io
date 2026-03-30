@@ -1,7 +1,19 @@
 [
   {
+    "title": "Cube Escape Collection",
+    "imageUrl": "images/games/colle.cjpg",
+    "time": "2026-03-25",
+    "alt": "Cube Escape Collection"
+  },
+  {
+    "title": "Samsara Room",
+    "imageUrl": "images/games/sr.jpg",
+    "time": "2026-03-24",
+    "alt": "Samsara Room"
+  },
+  {
     "title": "锈湖：旅馆",
-    "imageUrl": "https://img9.doubanio.com/lpic/s34675514.jpg",
+    "imageUrl": "images/games/hotel.png",
     "time": "2026-03-23",
     "alt": "锈湖：旅馆"
   },
