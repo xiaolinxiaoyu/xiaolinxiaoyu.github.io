@@ -1,5 +1,21 @@
 [
   {
+    "title":  "偷影子的人",
+    "imageUrl":  "images/books/tyz.jpg",
+    "time":  "2026-02-28",
+    "author": "马克·李维",
+    "recommender": "小林",
+    "alt":  "偷影子的人"
+  },
+  {
+    "title":  "雪国",
+    "imageUrl":  "images/books/xg.jpg",
+    "time":  "2026-02-28",
+    "author": "川端康成",
+    "recommender": "小林",
+    "alt":  "雪国"
+  },
+  {
     "title":  "目送",
     "imageUrl":  "images/books/ms.jpg",
     "time":  "2026-02-28",
