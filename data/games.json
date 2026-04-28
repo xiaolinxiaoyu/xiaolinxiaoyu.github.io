@@ -1,4 +1,11 @@
 [
+
+    {
+    "title": "星之卡比：探索发现",
+    "imageUrl": "images/games/xzkb.jpg",
+    "time": "2026-04-26",
+    "alt": "星之卡比：探索发现"
+  },
     {
     "title": "洛克王国",
     "imageUrl": "images/games/lkwg.png",
@@ -70,6 +77,12 @@
     "imageUrl": "images/games/kyzx.jpg",
     "time": "2025-10-01",
     "alt": "塞尔达传说·旷野之息"
+  },
+  {
+    "title": "喷射战士3",
+    "imageUrl": "images/games/pszs.jpg",
+    "time": "2026-08-30",
+    "alt": "喷射战士3"
   },
   {
     "title": "双人成行",
