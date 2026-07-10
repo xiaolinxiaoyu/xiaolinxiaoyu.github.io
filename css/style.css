@@ -12,6 +12,7 @@ body {
 }
 
 :root {
+  --font-display: "ZCOOL KuaiLe", "Microsoft YaHei", sans-serif;
   --bg-main: linear-gradient(135deg, #fff2f7 0%, #ffe4f0 100%);
   --bg-spot-1: rgba(255, 130, 190, 0.18);
   --bg-spot-2: rgba(255, 180, 220, 0.26);
@@ -677,11 +678,12 @@ body.theme-night .day-decor {
 }
 
 h1 {
-  font-size: 2.6rem;
+  font-family: var(--font-display);
+  font-size: 3rem;
   color: var(--title-color);
   text-shadow: 0 8px 18px rgba(255, 105, 180, 0.24);
   margin-bottom: 12px;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.04em;
 }
 
 .hero-subtitle {
@@ -1183,8 +1185,17 @@ body.theme-night .home-page-btn {
 
 @media (hover: hover) and (pointer: fine) {
   .card:hover {
-    transform: translateY(-5px);
+    transform: translateY(-6px);
     box-shadow: var(--shadow-card-hover);
+    border-color: rgba(239, 63, 147, 0.5);
+  }
+
+  .card:hover img {
+    transform: scale(1.06);
+  }
+
+  .card:hover h2 {
+    color: var(--title-color);
   }
 }
 
@@ -1193,6 +1204,11 @@ body.theme-night .home-page-btn {
   height: 102px;
   margin-bottom: 8px;
   object-fit: fill;
+  transition: transform 0.3s ease;
+}
+
+.card h2 {
+  transition: color 0.25s ease;
 }
 
 .card h2 {
