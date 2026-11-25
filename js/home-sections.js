@@ -363,7 +363,9 @@ function openMediaPreview(item, config) {
   if (item.recommender) extra.push(`<p>推荐人：${escapeHtml(item.recommender)}</p>`);
   if (item.location) extra.push(`<p>地点：${escapeHtml(item.location)}</p>`);
   if (item.note && !config.hideNoteInDetail) extra.push(`<p>备注：${escapeHtml(item.note)}</p>`);
-  extra.push(`<p>${escapeHtml(item.time || "未知")}</p>`);
+  if (item.time && item.time.trim()) {
+    extra.push(`<p>${escapeHtml(item.time)}</p>`);
+  }
 
   const cover = item.imageUrl
     ? `<img src="${escapeHtml(item.imageUrl)}" alt="${escapeHtml(item.alt || item.title || "预览")}">`
