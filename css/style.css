@@ -911,56 +911,6 @@ body.theme-night .milestone-celebration-card h3 {
   z-index: 3;
 }
 
-.anniversary-celebration .milestone-celebration-card {
-  width: min(480px, 92vw);
-  max-height: calc(100dvh - 36px);
-  overflow-y: auto;
-  padding: 30px 20px;
-  border: 2px solid #e6b66f;
-  background-image: radial-gradient(ellipse at top, #fff3d8, transparent 65%), linear-gradient(165deg, #fffafc, #ffe4ef);
-  box-shadow: 0 0 60px rgba(255, 201, 125, 0.25), 0 24px 60px rgba(186, 69, 130, 0.35);
-}
-
-body.theme-night .anniversary-celebration .milestone-celebration-card {
-  background-image: radial-gradient(ellipse at top, #634253, transparent 65%), linear-gradient(165deg, #2f2343, #3f2a58);
-  border-color: #d6ae78;
-}
-
-.anniversary-celebration .milestone-celebration-badge {
-  font-size: 0.875rem;
-}
-
-.anniversary-number {
-  margin: 4px 0 8px;
-  color: #b7782e;
-  font: 600 clamp(4rem, 16vw, 6rem)/1.1 Georgia, serif;
-  text-shadow: 0 3px 0 rgba(255, 255, 255, 0.5);
-}
-
-body.theme-night .anniversary-number {
-  color: #ffd595;
-  text-shadow: 0 0 24px rgba(255, 204, 130, 0.25);
-}
-
-.anniversary-number span {
-  display: inline-block;
-  margin-left: 8px;
-  font-size: 0.45em;
-  vertical-align: middle;
-}
-
-.milestone-celebration-card .anniversary-date {
-  margin-top: 18px;
-  font-size: 0.875rem;
-  letter-spacing: 0.04em;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .milestone-celebration-card {
-    animation: none;
-  }
-}
-
 .milestone-firework-burst {
   position: absolute;
   width: 0;

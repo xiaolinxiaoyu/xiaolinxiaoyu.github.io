@@ -205,44 +205,20 @@ function startMilestoneFireworks(overlay) {
   };
 }
 
-function getCelebrationInfo(now = new Date()) {
-  const dateParts = new Intl.DateTimeFormat("en-US", {
-    timeZone: "Asia/Shanghai", year: "numeric", month: "numeric", day: "numeric"
-  }).formatToParts(now);
-  const parts = Object.fromEntries(dateParts.map(({ type, value }) => [type, Number(value)]));
-  const todayDate = new Date(parts.year, parts.month - 1, parts.day);
-  const years = parts.year - startDate.getFullYear();
-  const isAnniversary = years > 0 && parts.month === startDate.getMonth() + 1 && parts.day === startDate.getDate();
-  const { milestoneDay, isMilestoneToday } = getMilestoneInfo(todayDate);
-  if (!isAnniversary && !isMilestoneToday) return null;
-  return { years, isAnniversary, milestoneDay, dateKey: formatDate(todayDate) };
-}
-
-let lastCelebrationDate = "";
-
 function showMilestoneCelebrationIfNeeded() {
-  const celebration = getCelebrationInfo();
-  if (!celebration || celebration.dateKey === lastCelebrationDate) return;
-  if (document.querySelector(".milestone-celebration-overlay")) return;
-  const { years, isAnniversary, milestoneDay, dateKey } = celebration;
-  lastCelebrationDate = dateKey;
+  const now = new Date();
+  const todayDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+  const { milestoneDay, isMilestoneToday } = getMilestoneInfo(todayDate);
+
+  if (!isMilestoneToday) return;
 
   const overlay = document.createElement("div");
-  overlay.className = `milestone-celebration-overlay${isAnniversary ? " anniversary-celebration" : ""}`;
-  const previousFocus = document.activeElement;
+  overlay.className = "milestone-celebration-overlay";
   overlay.innerHTML = `
-    <div class="milestone-celebration-card" role="dialog" aria-modal="true" aria-label="${isAnniversary ? `${years}周年庆祝` : "整百天庆祝"}">
-      ${isAnniversary ? `
-        <span class="milestone-celebration-badge">小林 & 小鱼 · 我们的纪念日</span>
-        <div class="anniversary-number" aria-hidden="true">${years}<span>♡</span></div>
-        <h3>${years === 1 ? "一" : years}周年快乐！</h3>
-        <p>从心动的第一天，到相伴的第${years}年。<br>谢谢你，把平凡的日子变成了珍贵的回忆。<br>往后的每一年，也要一起慢慢走呀 ♡</p>
-        <p class="anniversary-date">${formatDate(startDate)} — ${dateKey}</p>
-      ` : `
-        <h3>🎉🎉${milestoneDay}天快乐！！</h3>
-        <p>今天是小林和小鱼在一起的第${milestoneDay}天！！<br>请继续幸福下去吧~期待我们的第${milestoneDay + 100}天！！</p>
-      `}
-      <button type="button" class="milestone-celebration-close">${isAnniversary ? "收下幸福，奔赴下一年 ♡" : "好耶！收下这份喜悦~Happy~"}</button>
+    <div class="milestone-celebration-card" role="dialog" aria-modal="true" aria-label="整百天庆祝">
+      <h3>🎉🎉${milestoneDay}天快乐！！</h3>
+      <p>今天是小林和小鱼在一起的第${milestoneDay}天！！<br>请继续幸福下去吧~期待我们的第${milestoneDay + 100}天！！</p>
+      <button type="button" class="milestone-celebration-close">好耶！收下这份喜悦~Happy~</button>
     </div>
   `;
 
@@ -260,7 +236,6 @@ function showMilestoneCelebrationIfNeeded() {
     if (overlay.parentNode) {
       document.body.removeChild(overlay);
     }
-    if (previousFocus instanceof HTMLElement) previousFocus.focus();
   };
 
   overlay.addEventListener("click", (event) => {
@@ -277,7 +252,6 @@ function showMilestoneCelebrationIfNeeded() {
   document.addEventListener("keydown", onKeyDown);
 
   document.body.appendChild(overlay);
-  overlay.querySelector(".milestone-celebration-close").focus({ preventScroll: true });
 }
 
 function updateTogetherTime() {
@@ -983,7 +957,6 @@ initMusic();
 initTheme();
 setInterval(updateTogetherTime, 1000);
 setInterval(updateCountdowns, 1000);
-setInterval(showMilestoneCelebrationIfNeeded, 1000);
 
 if (window.matchMedia("(min-width: 721px)").matches) {
   if ("requestIdleCallback" in window) {
